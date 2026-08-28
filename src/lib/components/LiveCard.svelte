@@ -1,32 +1,23 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages.js';
 	import { getLocale } from '$lib/paraglide/runtime';
-	import { formatDate } from '$lib/format';
+	import LiveDateBadge from './LiveDateBadge.svelte';
+	import PerformerList from './PerformerList.svelte';
 	import type { LiveEntry } from '$lib/cms/types';
 
 	let { live }: { live: LiveEntry } = $props();
+	const locale = getLocale();
 </script>
 
-<article class="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-5 sm:p-6">
-	<p class="font-display text-lg font-semibold text-brand sm:text-xl">
-		{formatDate(live.date, getLocale())}
-	</p>
-
-	{#if live.openTime || live.startTime}
-		<p class="flex flex-wrap gap-x-4 gap-y-1 text-sm text-ink-muted">
-			{#if live.openTime}
-				<span>{m.live_open_label()} {live.openTime}</span>
-			{/if}
-			{#if live.startTime}
-				<span>{m.live_start_label()} {live.startTime}</span>
-			{/if}
-		</p>
-	{/if}
-
-	{#if live.performers?.length}
-		<p class="text-ink">
-			<span class="mr-2 text-sm text-ink-muted">{m.live_performers_label()}</span>
-			{live.performers.join(' / ')}
-		</p>
-	{/if}
+<!-- Home「次回のライブ」用のスポットライトカード。/live の日付バッジ・出演者表記と見た目を揃える。 -->
+<article class="grain flex gap-4 rounded-2xl border border-border bg-surface p-5 sm:p-6">
+	<LiveDateBadge date={live.date} {locale} />
+	<div class="flex min-w-0 flex-1 flex-col gap-2 pt-0.5">
+		<PerformerList performers={live.performers} />
+		{#if live.note}
+			<p class="text-sm whitespace-pre-line text-ink-muted">
+				<span class="sr-only">{m.live_note_label()}: </span>{live.note}
+			</p>
+		{/if}
+	</div>
 </article>

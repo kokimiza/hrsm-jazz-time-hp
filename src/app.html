@@ -8,14 +8,13 @@
 
 		<meta name="text-scale" content="scale" />
 
-		<!-- ライト/ダーク/システムのテーマをCSS読み込み・描画より前に確定させる（フラッシュ防止） -->
+		<!-- ライト/ダークのテーマをCSS読み込み・描画より前に確定させる（フラッシュ防止）。
+		     未選択時のデフォルトはダーク（システム設定は見ない）。 -->
 		<script>
 			(function () {
 				try {
 					var stored = localStorage.getItem('jazztime-theme');
-					var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-					var resolved =
-						stored === 'light' || stored === 'dark' ? stored : systemDark ? 'dark' : 'light';
+					var resolved = stored === 'light' ? 'light' : 'dark';
 					if (resolved === 'dark') document.documentElement.classList.add('dark');
 				} catch (e) {}
 			})();
@@ -31,7 +30,7 @@
 		%sveltekit.head%
 	</head>
 
-	<body data-sveltekit-preload-data="hover">
+	<body data-sveltekit-preload-data="tap">
 		<div style="display: contents">%sveltekit.body%</div>
 	</body>
 </html>

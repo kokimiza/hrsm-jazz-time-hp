@@ -28,3 +28,6 @@ project.inlang/cache/
 # Sanity Studio
 studio/dist
 .sanity
+
+# AI
+.claude

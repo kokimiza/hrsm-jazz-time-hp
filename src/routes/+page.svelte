@@ -2,6 +2,7 @@
 	import * as m from '$lib/paraglide/messages.js';
 	import Container from '$lib/components/Container.svelte';
 	import Button from '$lib/components/Button.svelte';
+	import TextLink from '$lib/components/TextLink.svelte';
 	import LiveCard from '$lib/components/LiveCard.svelte';
 	import JournalCard from '$lib/components/JournalCard.svelte';
 	import { localePath } from '$lib/i18n';
@@ -55,7 +56,7 @@
 </section>
 
 <!-- Next Live -->
-<section class="border-y border-border bg-surface">
+<section class="grain border-y border-border bg-surface">
 	<Container class="py-14 sm:py-20">
 		<h2 class="mb-6 font-display text-2xl font-semibold text-ink sm:text-3xl">
 			{m.next_live_heading()}
@@ -81,29 +82,21 @@
 				{m.home_about_body()}
 			</p>
 		</div>
-		<a
-			href={localePath('/about')}
-			class="font-medium text-brand hover:text-brand-deep md:justify-self-end"
-		>
-			{m.home_about_cta()} →
-		</a>
+		<TextLink href={localePath('/about')} class="md:justify-self-end">
+			{m.home_about_cta()}
+		</TextLink>
 	</Container>
 </section>
 
 <!-- Latest Journal -->
 {#if data.journalEntries.length}
-	<section class="border-y border-border bg-surface">
+	<section class="grain border-y border-border bg-surface">
 		<Container class="py-14 sm:py-20">
 			<div class="mb-8 flex items-end justify-between gap-4">
 				<h2 class="font-display text-2xl font-semibold text-ink sm:text-3xl">
 					{m.home_journal_heading()}
 				</h2>
-				<a
-					href={localePath('/journal')}
-					class="text-sm font-medium text-brand hover:text-brand-deep"
-				>
-					{m.home_journal_cta()} →
-				</a>
+				<TextLink href={localePath('/journal')}>{m.home_journal_cta()}</TextLink>
 			</div>
 			<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
 				{#each data.journalEntries as entry (entry._id)}

@@ -7,9 +7,9 @@
 	import PhoneLink from './PhoneLink.svelte';
 
 	const navItems = [
-		{ href: '/live', label: m.nav_live },
-		{ href: '/journal', label: m.nav_journal },
 		{ href: '/about', label: m.nav_about },
+		{ href: '/journal', label: m.nav_journal },
+		{ href: '/live', label: m.nav_live },
 		{ href: '/access', label: m.nav_access }
 	];
 
@@ -33,7 +33,7 @@
 					{m.site_name()}
 				</span>
 				<span
-					class="mt-1.5 hidden text-[0.65rem] font-medium tracking-[0.35em] text-ink-muted uppercase sm:block"
+					class="mt-1.5 hidden text-[1.04rem] font-medium tracking-[0.35em] text-ink-muted uppercase sm:block"
 				>
 					{m.hero_kicker()}
 				</span>

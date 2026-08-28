@@ -2,18 +2,19 @@
 	import * as m from '$lib/paraglide/messages.js';
 	import { localePath } from '$lib/i18n';
 	import PhoneLink from './PhoneLink.svelte';
+	import LanguageToggle from './LanguageToggle.svelte';
 
 	const year = new Date().getFullYear().toString();
 
 	const navItems = [
-		{ href: '/live', label: m.nav_live },
-		{ href: '/journal', label: m.nav_journal },
 		{ href: '/about', label: m.nav_about },
+		{ href: '/journal', label: m.nav_journal },
+		{ href: '/live', label: m.nav_live },
 		{ href: '/access', label: m.nav_access }
 	];
 </script>
 
-<footer class="border-t border-border bg-surface">
+<footer class="grain border-t border-border bg-surface">
 	<div
 		class="mx-auto flex max-w-6xl flex-col gap-6 px-4 py-10 pb-28 sm:px-6 md:flex-row md:items-start md:justify-between md:pb-10"
 	>
@@ -36,8 +37,9 @@
 	</div>
 
 	<div class="border-t border-border">
-		<p class="mx-auto max-w-6xl px-4 py-4 text-xs text-ink-muted sm:px-6">
-			{m.footer_rights({ year })}
-		</p>
+		<div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
+			<p class="text-xs text-ink-muted">{m.footer_rights({ year })}</p>
+			<LanguageToggle />
+		</div>
 	</div>
 </footer>

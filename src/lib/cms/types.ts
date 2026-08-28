@@ -1,36 +1,36 @@
 import type { PortableTextBlock } from '@portabletext/types';
 
-export type Locale = 'ja' | 'en';
-
-export type LocaleString = Partial<Record<Locale, string>>;
-export type LocaleBlockContent = Partial<Record<Locale, PortableTextBlock[]>>;
-
 export interface SanityImageRef {
 	asset: {
 		_ref: string;
 		_type: 'reference';
 	};
-	alt?: string;
+}
+
+export interface Performer {
+	name: string;
+	instrument?: string;
 }
 
 export interface LiveEntry {
 	_id: string;
 	date: string; // "YYYY-MM-DD"
-	openTime?: string;
-	startTime?: string;
-	performers: string[];
+	performers: Performer[];
+	note?: string;
 }
 
+/**
+ * 日誌（ブログ）は日本語のみ。タイトル・本文は多言語化せず、
+ * サイトの言語切替（ja/en）に関わらず常に日本語のまま表示する。
+ */
 export interface JournalListEntry {
 	_id: string;
 	slug: string;
-	title: LocaleString;
-	publishedAt: string;
+	title: string;
+	publishedAt: string; // Sanityの `_createdAt` をエイリアスしたもの（投稿日時は自動）
 	coverImage?: SanityImageRef;
-	excerpt?: LocaleString;
-	tag?: string;
 }
 
 export interface JournalEntry extends JournalListEntry {
-	body: LocaleBlockContent;
+	body: PortableTextBlock[];
 }

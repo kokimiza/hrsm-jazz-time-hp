@@ -1,7 +1,9 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages.js';
 	import Container from '$lib/components/Container.svelte';
-	import LiveCard from '$lib/components/LiveCard.svelte';
+	import LiveCalendar from '$lib/components/LiveCalendar.svelte';
+	import TextLink from '$lib/components/TextLink.svelte';
+	import { localePath } from '$lib/i18n';
 
 	let { data } = $props();
 </script>
@@ -18,13 +20,11 @@
 		<p class="text-ink-muted">{m.live_page_lead()}</p>
 	</header>
 
-	{#if data.lives.length}
-		<div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-			{#each data.lives as live (live._id)}
-				<LiveCard {live} />
-			{/each}
-		</div>
-	{:else}
-		<p class="text-ink-muted">{m.next_live_empty()}</p>
-	{/if}
+	<div class="max-w-2xl">
+		<LiveCalendar lives={data.lives} />
+
+		<p class="mt-8">
+			<TextLink href={localePath('/live/archive')}>{m.live_archive_cta()}</TextLink>
+		</p>
+	</div>
 </Container>

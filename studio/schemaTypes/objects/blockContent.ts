@@ -1,6 +1,6 @@
 import { defineType } from 'sanity';
 
-/** Portable Text本文（画像埋め込み可）。localeBlockContentのja/en各フィールドで使う。 */
+/** Portable Text本文（画像埋め込み可）。journalのbodyで使う。 */
 export default defineType({
 	name: 'blockContent',
 	title: 'Block content',

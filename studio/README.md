@@ -12,7 +12,22 @@ pnpm --filter studio exec sanity init --env   # 既存プロジェクトを作�
 
 `sanity init --env` を使うと、選んだprojectId/datasetが `studio/.env` に `SANITY_STUDIO_PROJECT_ID` / `SANITY_STUDIO_DATASET` として書き込まれる（`.env.example` を参考に手動で書いてもよい）。
 
+CLIを使わず https://www.sanity.io/manage からブラウザ操作だけでプロジェクト作成しても良い（Create project → datasetは`production`という名前で作成 → 表示されるProject IDを控える）。
+
 サイト本体側にも同じprojectId/datasetを反映すること（リポジトリルートの `.env`、`.env.example` 参照）。
+
+### Cloudflare Pagesにデプロイする場合
+
+ローカルの `.env` に加えて、**Cloudflare Pagesの両プロジェクトの環境変数にも同じ値を設定する**必要がある（`.env`はビルドサーバーには反映されない）。
+
+- Studio用プロジェクト: `SANITY_STUDIO_PROJECT_ID` / `SANITY_STUDIO_DATASET`
+- サイト本体プロジェクト: `PUBLIC_SANITY_PROJECT_ID` / `PUBLIC_SANITY_DATASET`
+
+設定を忘れると、デプロイ済みのStudioが `No project with the ID placeholder-project-id exists` のようなエラーを出す（[sanity.config.ts](./sanity.config.ts)のフォールバック値のまま動いている状態）。
+
+また、StudioはブラウザからSanity APIを直接叩くため、**manage.sanity.io → 対象プロジェクト → API → CORS Origins** にStudioのデプロイURL（`*.pages.dev`や独自ドメイン）を「Allow credentials」有効で追加しておくこと。サイト本体側はビルド時にNode側から叩くだけなのでCORS設定は不要。
+
+環境変数を追加・変更した後は、両プロジェクトとも再デプロイ（Retry deployment）しないと反映されない。
 
 ## 開発
 

@@ -6,7 +6,7 @@ function today(): string {
 	return new Date().toISOString().slice(0, 10);
 }
 
-const liveProjection = `{ _id, date, openTime, startTime, performers }`;
+const liveProjection = `{ _id, date, performers[]{ name, instrument }, note }`;
 
 /** 今後のライブ一覧（開催日が近い順）。過去分・詳細ページは持たない。 */
 export async function getUpcomingLives(): Promise<LiveEntry[]> {
@@ -26,19 +26,38 @@ export async function getNextLive(): Promise<LiveEntry | null> {
 	);
 }
 
+/** 過去ライブ（アーカイブ）の1ページあたりの件数。 */
+export const ARCHIVE_PAGE_SIZE = 12;
+
+/** 過去ライブの総件数（ページ数の計算に使う）。 */
+export async function getPastLivesCount(): Promise<number> {
+	return safeFetch<number>(`count(*[_type == "live" && date < $today])`, { today: today() }, 0);
+}
+
+/** 過去ライブ一覧（開催日が新しい順）。1ページ分だけ返す。 */
+export async function getPastLives(page: number): Promise<LiveEntry[]> {
+	const start = (page - 1) * ARCHIVE_PAGE_SIZE;
+	const end = start + ARCHIVE_PAGE_SIZE;
+	return safeFetch<LiveEntry[]>(
+		`*[_type == "live" && date < $today] | order(date desc) [$start...$end] ${liveProjection}`,
+		{ today: today(), start, end },
+		[]
+	);
+}
+
+// 投稿日時は運営が入力する項目ではなく、Sanityが自動で持つ `_createdAt` をそのまま使う
+// （コード側は従来通り `publishedAt` という名前で扱えるよう、projectionでエイリアスする）。
 const journalListProjection = `{
 	_id,
 	"slug": slug.current,
 	title,
-	publishedAt,
-	coverImage,
-	excerpt,
-	tag
+	"publishedAt": _createdAt,
+	coverImage
 }`;
 
 export async function getLatestJournalEntries(limit: number): Promise<JournalListEntry[]> {
 	return safeFetch<JournalListEntry[]>(
-		`*[_type == "journal"] | order(publishedAt desc)[0...$limit] ${journalListProjection}`,
+		`*[_type == "journal"] | order(_createdAt desc)[0...$limit] ${journalListProjection}`,
 		{ limit },
 		[]
 	);
@@ -46,7 +65,7 @@ export async function getLatestJournalEntries(limit: number): Promise<JournalLis
 
 export async function getAllJournalEntries(): Promise<JournalListEntry[]> {
 	return safeFetch<JournalListEntry[]>(
-		`*[_type == "journal"] | order(publishedAt desc) ${journalListProjection}`,
+		`*[_type == "journal"] | order(_createdAt desc) ${journalListProjection}`,
 		{},
 		[]
 	);
@@ -65,10 +84,8 @@ const journalDetailProjection = `{
 	_id,
 	"slug": slug.current,
 	title,
-	publishedAt,
+	"publishedAt": _createdAt,
 	coverImage,
-	excerpt,
-	tag,
 	body
 }`;
 

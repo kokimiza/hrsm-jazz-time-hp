@@ -10,10 +10,8 @@
 	"nav_about": "ABOUT",
 	"nav_access": "ACCESS",
 
-	"theme_light": "Light",
-	"theme_dark": "Dark",
-	"theme_system": "System",
 	"theme_toggle_label": "Theme",
+	"language_toggle_label": "Switch language",
 
 	"phone_number": "082-247-8912",
 	"phone_label": "Phone",
@@ -26,7 +24,7 @@
 
 	"hero_kicker": "LIVE JAZZ IN HIROSHIMA",
 	"hero_headline_line1": "Nagarekawa, Hiroshima.",
-	"hero_headline_line2": "A night of music, drinks, and jazz.",
+	"hero_headline_line2": "A night of drinks and live jazz.",
 	"hero_lead": "JAZZTIME is a jazz bar in Hiroshima where you can enjoy live jazz alongside a drink.",
 	"hero_cta_live": "View live schedule",
 	"hero_cta_access": "Access",
@@ -34,8 +32,7 @@
 	"next_live_heading": "Next Live",
 	"next_live_empty": "No upcoming live shows are scheduled right now. Please call us for the latest information.",
 	"live_performers_label": "Performers",
-	"live_open_label": "Open",
-	"live_start_label": "Start",
+	"live_note_label": "Note",
 
 	"home_about_heading": "About JAZZTIME",
 	"home_about_body": "A jazz bar in Nagarekawa-cho, Naka-ku, Hiroshima. Enjoy jazz-centered music, live performances and sessions, in a calm bar space.",
@@ -49,6 +46,16 @@
 
 	"live_page_heading": "LIVE SCHEDULE",
 	"live_page_lead": "We regularly host live jazz. Performers and dates are listed below.",
+	"live_archive_cta": "View past lives",
+
+	"live_archive_heading": "Past Lives",
+	"live_archive_lead": "A record of the live shows we've hosted so far.",
+	"live_archive_empty": "No past lives yet.",
+	"live_archive_back": "Back to live schedule",
+
+	"pagination_prev": "Prev",
+	"pagination_next": "Next",
+	"pagination_page_of": "{page} / {total}",
 
 	"journal_page_heading": "Journal",
 	"journal_page_lead": "Notes and small updates from JAZZTIME.",
@@ -57,21 +64,26 @@
 	"journal_back_to_list": "Back to journal",
 
 	"about_page_heading": "ABOUT",
-	"about_lead": "Bringing jazz closer to everyone.",
-	"about_body": "JAZZTIME is a place where listeners, musicians, and jazz lovers gather. From those new to jazz to those who have loved it for years, we aim for a space everyone can enjoy in their own way.",
-	"about_features_heading": "What to expect",
-	"about_feature_1": "A music space centered on jazz",
-	"about_feature_2": "Live performances and shows",
-	"about_feature_3": "Connections with local musicians",
-	"about_feature_4": "Drinks as a proper bar",
-	"about_feature_5": "Easy to visit solo",
-	"about_feature_6": "A gathering place for jazz fans and musicians",
+	"about_lead": "Please check the following before your visit.",
+	"about_hours_label": "Hours",
+	"about_hours_value": "7:30 PM – 11:30 PM",
+	"about_hours_note": "Last order 11:00 PM",
+	"about_sets_label": "Set times",
+	"about_sets_value": "8:30 PM – 10:00 PM (1–2 sets)",
+	"about_sets_note": "Session nights: 8:00 PM – 11:00 PM",
+	"about_payment_label": "Payment",
+	"about_payment_value": "Cash only",
+	"about_payment_note": "A music charge applies",
+	"about_closed_label": "Closed",
+	"about_closed_value": "Sundays and public holidays",
+	"about_session_label": "Session Night",
+	"about_session_value": "1st & 3rd Saturdays of the month",
 
 	"access_page_heading": "ACCESS",
 	"access_shop_name": "JAZZTIME",
 	"access_address_heading": "Address",
 	"access_phone_heading": "Phone",
 	"access_hours_heading": "Hours",
-	"access_hours_body": "Business hours and regular closing days are being confirmed. Please call us for the latest information.",
+	"access_hours_body": "7:30 PM – 11:30 PM (last order 11:00 PM) / Closed Sundays & holidays. See About for full details.",
 	"access_map_heading": "Map"
 }

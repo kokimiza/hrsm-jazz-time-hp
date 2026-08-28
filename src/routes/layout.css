@@ -10,6 +10,23 @@
 	--font-display: 'Cormorant', 'Zen Old Mincho', serif;
 	--font-body: 'Noto Sans JP', ui-sans-serif, system-ui, -apple-system, sans-serif;
 
+	/* 文字サイズが全体的に小さかったため、Tailwind既定のフォントサイズスケールを一律1.6倍する。
+	   行間比率（--text-*--line-height）は無次元の比率なので、フォントサイズだけ変えれば自動で追従する。
+	   spacing（padding/margin/gap等）のスケールは触っていないので、余白比率は変わらない。 */
+	--text-xs: 1.2rem; /* 0.75rem * 1.6 */
+	--text-sm: 1.4rem; /* 0.875rem * 1.6 */
+	--text-base: 1.6rem; /* 1rem * 1.6 */
+	--text-lg: 1.8rem; /* 1.125rem * 1.6 */
+	--text-xl: 2rem; /* 1.25rem * 1.6 */
+	--text-2xl: 2.4rem; /* 1.5rem * 1.6 */
+	--text-3xl: 3rem; /* 1.875rem * 1.6 */
+	--text-4xl: 3.6rem; /* 2.25rem * 1.6 */
+	--text-5xl: 4.8rem; /* 3rem * 1.6 */
+	--text-6xl: 6rem; /* 3.75rem * 1.6 */
+	--text-7xl: 7.2rem; /* 4.5rem * 1.6 */
+	--text-8xl: 9.6rem; /* 6rem * 1.6 */
+	--text-9xl: 12.8rem; /* 8rem * 1.6 */
+
 	/* ライトモードの既定値。ダークモードは下の .dark で上書きする */
 	--color-canvas: #f7f2e9; /* 生成り・アイボリー地 */
 	--color-surface: #ffffff; /* カード等の面色 */
@@ -44,4 +61,31 @@ body {
 }
 .no-scrollbar::-webkit-scrollbar {
 	display: none;
+}
+
+/*
+ * 紙のざらつき感（グレイン）。ジャズクラブのポスターやレコードジャケットのような
+ * 手触りを、カード・ボタン・帯といった共通コンポーネントに薄く重ねるための装飾。
+ * 画像アセットは使わず、feTurbulenceで生成した粒状ノイズをタイル状の背景として敷き、
+ * blend-modeで質感だけをその要素の色に馴染ませる（どのテーマ色の上でも自動で追従する）。
+ * 適用先には `position: relative` が必要なので、このクラス自体に含めている。
+ */
+.grain {
+	position: relative;
+	isolation: isolate;
+}
+.grain::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	pointer-events: none;
+	background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='180'%20height='180'%3E%3Cfilter%20id='n'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.8'%20numOctaves='3'%20stitchTiles='stitch'/%3E%3CfeColorMatrix%20type='saturate'%20values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR%20type='linear'%20slope='4'%20intercept='-1.5'/%3E%3CfeFuncG%20type='linear'%20slope='4'%20intercept='-1.5'/%3E%3CfeFuncB%20type='linear'%20slope='4'%20intercept='-1.5'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect%20width='100%25'%20height='100%25'%20filter='url(%23n)'/%3E%3C/svg%3E");
+	background-size: 180px 180px;
+	mix-blend-mode: multiply;
+	opacity: 0.07;
+}
+.dark .grain::before {
+	mix-blend-mode: overlay;
+	opacity: 0.14;
 }

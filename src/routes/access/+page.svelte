@@ -2,6 +2,8 @@
 	import * as m from '$lib/paraglide/messages.js';
 	import Container from '$lib/components/Container.svelte';
 	import PhoneLink from '$lib/components/PhoneLink.svelte';
+	import TextLink from '$lib/components/TextLink.svelte';
+	import { localePath } from '$lib/i18n';
 
 	// 簡易的な地図埋め込み（APIキー不要）。本番運用ではGoogle Maps Embed APIへの切替を推奨。
 	const mapQuery = encodeURIComponent('広島県広島市中区流川町2-24 蔵ビル4F JAZZTIME');
@@ -41,7 +43,8 @@
 
 			<div>
 				<h2 class="mb-1 text-sm font-medium text-ink-muted">{m.access_hours_heading()}</h2>
-				<p class="text-ink-muted">{m.access_hours_body()}</p>
+				<p class="mb-1 text-ink-muted">{m.access_hours_body()}</p>
+				<TextLink href={localePath('/about')}>{m.about_page_heading()}</TextLink>
 			</div>
 		</div>
 

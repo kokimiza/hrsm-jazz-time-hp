@@ -1,36 +1,32 @@
 <script lang="ts">
-	import type { Pathname } from '$app/types';
-	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
-	import { locales, localizeHref } from '$lib/paraglide/runtime';
+	import { deLocalizeHref } from '$lib/paraglide/runtime';
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import Header from '$lib/components/Header.svelte';
 	import Footer from '$lib/components/Footer.svelte';
 	import MobileQuickBar from '$lib/components/MobileQuickBar.svelte';
-	import { theme } from '$lib/stores/theme.svelte';
+	import AmbientBackground from '$lib/components/AmbientBackground.svelte';
 
 	let { children } = $props();
 
-	// system設定の変更にライブ追従する（初回描画のテーマ自体は app.html のインラインスクリプトが担当）
-	$effect(() => theme.watchSystem());
+	// Home（Heroに主役の店内写真がある）以外では、うっすら背景に写真を残す。
+	const isHome = $derived(deLocalizeHref(page.url.pathname) === '/');
 </script>
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<div class="flex min-h-dvh flex-col">
+{#if !isHome}
+	<AmbientBackground />
+{/if}
+
+<div class="flex min-h-dvh flex-col pb-16 md:pb-0">
 	<Header />
 	<main class="flex-1">
 		{@render children()}
 	</main>
 	<Footer />
 	<MobileQuickBar />
-</div>
-
-<div style="display:none">
-	{#each locales as locale (locale)}
-		<a href={resolve(localizeHref(page.url.pathname, { locale }) as Pathname)}>{locale}</a>
-	{/each}
 </div>

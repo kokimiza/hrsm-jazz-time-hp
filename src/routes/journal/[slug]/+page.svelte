@@ -3,7 +3,6 @@
 	import * as m from '$lib/paraglide/messages.js';
 	import { getLocale } from '$lib/paraglide/runtime';
 	import { formatDate } from '$lib/format';
-	import { pickLocale, pickLocaleBlocks } from '$lib/cms/localize';
 	import { urlFor } from '$lib/cms/image';
 	import { localePath } from '$lib/i18n';
 	import Container from '$lib/components/Container.svelte';
@@ -11,15 +10,13 @@
 	let { data } = $props();
 	const locale = getLocale();
 
-	const title = $derived(pickLocale(data.entry.title, locale));
-	const excerpt = $derived(pickLocale(data.entry.excerpt, locale));
-	const body = $derived(pickLocaleBlocks(data.entry.body, locale));
+	// 日誌の本文は日本語のみ（サイトの言語切替には追従しない）。
+	const title = $derived(data.entry.title);
 	const cover = $derived(urlFor(data.entry.coverImage, 1600));
 </script>
 
 <svelte:head>
 	<title>{title} | {m.site_name()}</title>
-	{#if excerpt}<meta name="description" content={excerpt} />{/if}
 </svelte:head>
 
 <article class="py-14 sm:py-20">
@@ -34,11 +31,15 @@
 		</header>
 
 		{#if cover}
-			<img src={cover} alt="" class="mb-10 aspect-[16/9] w-full rounded-2xl object-cover" />
+			<img
+				src={cover}
+				alt="ブログカバー"
+				class="mb-10 aspect-[16/9] w-full rounded-2xl object-cover"
+			/>
 		{/if}
 
 		<div class="prose max-w-none prose-neutral dark:prose-invert prose-headings:font-display">
-			<PortableText value={body} />
+			<PortableText value={data.entry.body} />
 		</div>
 	</Container>
 </article>

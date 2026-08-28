@@ -1,6 +1,10 @@
 import { defineField, defineType } from 'sanity';
 
-/** 日誌（ブログ）。運営が思ったことや出来事を綴る、ゆるいブログ/日誌枠。 */
+/**
+ * 日誌（ブログ）。運営が思ったことや出来事を綴る、ゆるいブログ/日誌枠。
+ * 日本語のみ（英語版は持たない。サイトの言語切替に関わらず常に日本語で表示される）。
+ * 投稿日時・URL(スラッグ)は運営に入力させず、自動で決まる。
+ */
 export default defineType({
 	name: 'journal',
 	title: 'Journal',
@@ -9,72 +13,49 @@ export default defineType({
 		defineField({
 			name: 'title',
 			title: 'タイトル',
-			type: 'localeString',
-			validation: (rule) =>
-				rule.custom((value: { ja?: string } | undefined) =>
-					value?.ja ? true : '日本語タイトルは必須です'
-				)
-		}),
-		defineField({
-			name: 'slug',
-			title: 'スラッグ',
-			type: 'slug',
-			options: {
-				source: (doc) => (doc as { title?: { ja?: string } }).title?.ja ?? '',
-				maxLength: 96
-			},
+			type: 'string',
 			validation: (rule) => rule.required()
 		}),
 		defineField({
-			name: 'publishedAt',
-			title: '投稿日時',
-			type: 'datetime',
-			initialValue: () => new Date().toISOString(),
+			name: 'slug',
+			title: 'URL',
+			type: 'slug',
+			readOnly: true,
+			description: '投稿した日時から自動で決まる。編集は不要。',
+			// 「Generate」操作なしで、ドキュメント作成時に日付+時刻から自動採番する。
+			initialValue: () => {
+				const now = new Date();
+				const pad = (n: number) => String(n).padStart(2, '0');
+				const current =
+					`${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}` +
+					`-${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+				return { _type: 'slug', current };
+			},
 			validation: (rule) => rule.required()
 		}),
 		defineField({
 			name: 'coverImage',
 			title: 'カバー画像',
 			type: 'image',
-			options: { hotspot: true },
-			fields: [{ name: 'alt', title: '代替テキスト', type: 'string' }]
-		}),
-		defineField({
-			name: 'excerpt',
-			title: '抜粋（一覧・SNSシェア用）',
-			type: 'localeText'
-		}),
-		defineField({
-			name: 'tag',
-			title: 'タグ',
-			type: 'string',
-			options: {
-				list: [
-					{ title: 'Live report', value: 'live-report' },
-					{ title: 'お知らせ', value: 'news' },
-					{ title: 'つぶやき', value: 'diary' }
-				]
-			}
+			options: { hotspot: true }
+			// 代替テキストは運営に入力させず、サイト側で固定文言（「ブログカバー」）を使う。
 		}),
 		defineField({
 			name: 'body',
 			title: '本文',
-			type: 'localeBlockContent',
-			validation: (rule) =>
-				rule.custom((value: { ja?: unknown[] } | undefined) =>
-					value?.ja?.length ? true : '日本語本文は必須です'
-				)
+			type: 'blockContent',
+			validation: (rule) => rule.required()
 		})
 	],
 	orderings: [
 		{
 			title: '投稿日時',
-			name: 'publishedAtDesc',
-			by: [{ field: 'publishedAt', direction: 'desc' }]
+			name: 'createdAtDesc',
+			by: [{ field: '_createdAt', direction: 'desc' }]
 		}
 	],
 	preview: {
-		select: { title: 'title.ja', date: 'publishedAt', media: 'coverImage' },
+		select: { title: 'title', date: '_createdAt', media: 'coverImage' },
 		prepare({ title, date, media }) {
 			return {
 				title: title || '(無題)',
