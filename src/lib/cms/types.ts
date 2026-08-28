@@ -19,6 +19,14 @@ export interface LiveEntry {
 	note?: string;
 }
 
+/** キャスト（出演ミュージシャン）マスタ。Liveの出演者はここへの参照で選ばれる。 */
+export interface CastMember {
+	_id: string;
+	name: string;
+	icon?: SanityImageRef;
+	bio?: string;
+}
+
 /**
  * 日誌（ブログ）は日本語のみ。タイトル・本文は多言語化せず、
  * サイトの言語切替（ja/en）に関わらず常に日本語のまま表示する。

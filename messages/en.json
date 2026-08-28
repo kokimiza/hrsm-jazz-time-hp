@@ -52,6 +52,11 @@
 	"live_archive_lead": "A record of the live shows we've hosted so far.",
 	"live_archive_empty": "No past lives yet.",
 	"live_archive_back": "Back to live schedule",
+	"live_cast_cta": "About the Cast",
+
+	"cast_page_heading": "Cast",
+	"cast_page_lead": "Meet the musicians who perform at JAZZTIME.",
+	"cast_empty": "No cast members to show right now.",
 
 	"pagination_prev": "Prev",
 	"pagination_next": "Next",

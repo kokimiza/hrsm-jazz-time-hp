@@ -18,6 +18,7 @@
 			{m.live_page_heading()}
 		</h1>
 		<p class="text-ink-muted">{m.live_page_lead()}</p>
+		<TextLink href={localePath('/live/cast')}>{m.live_cast_cta()}</TextLink>
 	</header>
 
 	<div class="max-w-2xl">

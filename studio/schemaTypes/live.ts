@@ -20,17 +20,18 @@ export default defineType({
 			name: 'performers',
 			title: '出演者',
 			type: 'array',
-			// 「Alice(P)」のように名前と楽器を1本の文字列で毎回書くのは面倒＆表記ゆれの元なので、
-			// 名前と楽器を別フィールドに分け、表示時の組み立て（"Alice（Piano）"）はサイト側で行う。
+			// 名前は毎回手打ちせず、castマスタから選ぶ（外部キー参照）。楽器はマスタ化せず、
+			// ライブごとの自由記述のまま（同じ人でもライブによって違う楽器を担当することがあるため）。
 			of: [
 				{
 					type: 'object',
 					name: 'performer',
 					fields: [
 						defineField({
-							name: 'name',
-							title: '名前',
-							type: 'string',
+							name: 'cast',
+							title: '出演者',
+							type: 'reference',
+							to: [{ type: 'cast' }],
 							validation: (rule) => rule.required()
 						}),
 						defineField({
@@ -41,7 +42,7 @@ export default defineType({
 						})
 					],
 					preview: {
-						select: { name: 'name', instrument: 'instrument' },
+						select: { name: 'cast.name', instrument: 'instrument' },
 						prepare({ name, instrument }) {
 							return { title: instrument ? `${name}（${instrument}）` : name };
 						}
@@ -66,18 +67,15 @@ export default defineType({
 		}
 	],
 	preview: {
+		// performers[].cast は参照なので、ここ（配列まるごとのselect）では名前をデリファレンスできない
+		// （Sanityの1階層デリファレンスは固定パスのみ対応。各performer行自体のpreviewは上のcast.nameで解決している）。
+		// 一覧では人数だけ出す。
 		select: { date: 'date', performers: 'performers' },
 		prepare({ date, performers }) {
-			const names = Array.isArray(performers)
-				? performers
-						.map((p: { name?: string; instrument?: string }) =>
-							p.instrument ? `${p.name}（${p.instrument}）` : p.name
-						)
-						.join(' / ')
-				: undefined;
+			const count = Array.isArray(performers) ? performers.length : 0;
 			return {
 				title: date ?? '(日付未設定)',
-				subtitle: names
+				subtitle: count ? `${count}名出演` : undefined
 			};
 		}
 	}

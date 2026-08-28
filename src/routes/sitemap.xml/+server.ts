@@ -7,7 +7,7 @@ import { absoluteLocalizedUrl } from '$lib/site';
 // （運営が投稿→Webhookでサイトが再ビルド→sitemap.xmlも自動で更新、という流れになる）
 export const prerender = true;
 
-const STATIC_PATHS = ['/', '/about', '/live', '/live/archive', '/journal', '/access'];
+const STATIC_PATHS = ['/', '/about', '/live', '/live/archive', '/live/cast', '/journal', '/access'];
 
 function xmlEscape(value: string): string {
 	return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');

@@ -1,12 +1,14 @@
 import { safeFetch } from './client';
-import type { JournalEntry, JournalListEntry, LiveEntry } from './types';
+import type { CastMember, JournalEntry, JournalListEntry, LiveEntry } from './types';
 
 /** GROQの `date >= $today` 比較のための "YYYY-MM-DD"（ビルド時点の日付で確定する）。 */
 function today(): string {
 	return new Date().toISOString().slice(0, 10);
 }
 
-const liveProjection = `{ _id, date, performers[]{ name, instrument }, note }`;
+// performers[].cast はcastマスタへの参照。表示用に名前をデリファレンスして
+// 従来通り `{ name, instrument }` の形でサイト側に渡す（表示コンポーネント側は変更不要）。
+const liveProjection = `{ _id, date, performers[]{ "name": cast->name, instrument }, note }`;
 
 /** 今後のライブ一覧（開催日が近い順）。過去分・詳細ページは持たない。 */
 export async function getUpcomingLives(): Promise<LiveEntry[]> {
@@ -94,5 +96,14 @@ export async function getJournalEntryBySlug(slug: string): Promise<JournalEntry 
 		`*[_type == "journal" && slug.current == $slug][0] ${journalDetailProjection}`,
 		{ slug },
 		null
+	);
+}
+
+/** キャスト（出演ミュージシャン）一覧。無効化されたメンバーはサイトには出さない。 */
+export async function getActiveCast(): Promise<CastMember[]> {
+	return safeFetch<CastMember[]>(
+		`*[_type == "cast" && active == true] | order(name asc) { _id, name, icon, bio }`,
+		{},
+		[]
 	);
 }
