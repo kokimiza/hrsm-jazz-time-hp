@@ -269,8 +269,8 @@ TEL：
 ├── HOME
 ├── ABOUT
 ├── LIVE
-│   ├── SCHEDULE
-│   └── ARCHIVE
+│ ├── SCHEDULE
+│ └── ARCHIVE
 ├── MUSICIAN
 ├── MENU
 ├── ACCESS
@@ -374,11 +374,11 @@ LIVE JAZZ IN HIROSHIMA
 
 /
 ├── Home
-│   ├── Hero
-│   ├── Next Live
-│   ├── About
-│   ├── Latest News
-│   └── Access
+│ ├── Hero
+│ ├── Next Live
+│ ├── About
+│ ├── Latest News
+│ └── Access
 │
 ├── Live Schedule
 │

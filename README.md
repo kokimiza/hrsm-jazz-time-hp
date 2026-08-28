@@ -1,3 +1,12 @@
+# JAZZTIME 広島 — サイト
+
+設計は [doc/designs.md](./doc/designs.md) を参照。SvelteKit（`adapter-static`）+ Tailwind CSS v4 + Sanity（`/studio`）のpnpmモノレポ構成。
+
+- サイト本体の環境変数：`.env.example` を `.env` にコピーし、Sanityのproject ID等を設定（未設定でもビルドは通り、CMSコンテンツが空の状態で出力される）
+- Sanity Studioのセットアップ：[studio/README.md](./studio/README.md) 参照（`sanity login` 等、アカウントが必要な手順あり）
+
+---
+
 # sv
 
 Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).

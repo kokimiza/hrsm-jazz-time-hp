@@ -1,4 +1,77 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-	"hello_world": "Hello, {name} from en!"
+
+	"site_name": "JAZZTIME",
+	"site_name_full": "JAZZTIME Hiroshima",
+
+	"nav_home": "HOME",
+	"nav_live": "LIVE",
+	"nav_journal": "JOURNAL",
+	"nav_about": "ABOUT",
+	"nav_access": "ACCESS",
+
+	"theme_light": "Light",
+	"theme_dark": "Dark",
+	"theme_system": "System",
+	"theme_toggle_label": "Theme",
+
+	"phone_number": "082-247-8912",
+	"phone_label": "Phone",
+	"call_now": "Call now",
+
+	"address_line1": "2-24 Nagarekawa-cho, Naka-ku,",
+	"address_line2": "Hiroshima, Kura Bldg. 4F",
+
+	"footer_rights": "© {year} JAZZTIME",
+
+	"hero_kicker": "LIVE JAZZ IN HIROSHIMA",
+	"hero_headline_line1": "Nagarekawa, Hiroshima.",
+	"hero_headline_line2": "A night of music, drinks, and jazz.",
+	"hero_lead": "JAZZTIME is a jazz bar in Hiroshima where you can enjoy live jazz alongside a drink.",
+	"hero_cta_live": "View live schedule",
+	"hero_cta_access": "Access",
+
+	"next_live_heading": "Next Live",
+	"next_live_empty": "No upcoming live shows are scheduled right now. Please call us for the latest information.",
+	"live_performers_label": "Performers",
+	"live_open_label": "Open",
+	"live_start_label": "Start",
+
+	"home_about_heading": "About JAZZTIME",
+	"home_about_body": "A jazz bar in Nagarekawa-cho, Naka-ku, Hiroshima. Enjoy jazz-centered music, live performances and sessions, in a calm bar space.",
+	"home_about_cta": "More about JAZZTIME",
+
+	"home_journal_heading": "Latest Journal",
+	"home_journal_cta": "More journal entries",
+
+	"home_access_heading": "Access",
+	"home_access_cta": "See access details",
+
+	"live_page_heading": "LIVE SCHEDULE",
+	"live_page_lead": "We regularly host live jazz. Performers and dates are listed below.",
+
+	"journal_page_heading": "Journal",
+	"journal_page_lead": "Notes and small updates from JAZZTIME.",
+	"journal_empty": "No entries yet.",
+	"journal_read_more": "Read more",
+	"journal_back_to_list": "Back to journal",
+
+	"about_page_heading": "ABOUT",
+	"about_lead": "Bringing jazz closer to everyone.",
+	"about_body": "JAZZTIME is a place where listeners, musicians, and jazz lovers gather. From those new to jazz to those who have loved it for years, we aim for a space everyone can enjoy in their own way.",
+	"about_features_heading": "What to expect",
+	"about_feature_1": "A music space centered on jazz",
+	"about_feature_2": "Live performances and shows",
+	"about_feature_3": "Connections with local musicians",
+	"about_feature_4": "Drinks as a proper bar",
+	"about_feature_5": "Easy to visit solo",
+	"about_feature_6": "A gathering place for jazz fans and musicians",
+
+	"access_page_heading": "ACCESS",
+	"access_shop_name": "JAZZTIME",
+	"access_address_heading": "Address",
+	"access_phone_heading": "Phone",
+	"access_hours_heading": "Hours",
+	"access_hours_body": "Business hours and regular closing days are being confirmed. Please call us for the latest information.",
+	"access_map_heading": "Map"
 }

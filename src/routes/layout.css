@@ -1,2 +1,47 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
+
+/* .dark クラス（<html>に付与）でダークモードを切り替える。
+   付与/剥がしは src/app.html のインラインスクリプトと ThemeToggle.svelte が担当する。 */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+	/* 見出し：欧文はセリフ、和文は明朝。文字ごとにフォールバックするので混在OK */
+	--font-display: 'Cormorant', 'Zen Old Mincho', serif;
+	--font-body: 'Noto Sans JP', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+	/* ライトモードの既定値。ダークモードは下の .dark で上書きする */
+	--color-canvas: #f7f2e9; /* 生成り・アイボリー地 */
+	--color-surface: #ffffff; /* カード等の面色 */
+	--color-ink: #201a16; /* 本文文字色（純黒は避ける） */
+	--color-ink-muted: #5c5248; /* 補助テキスト */
+	--color-brand: #641c24; /* 臙脂〜バーガンディ（アクセント本体） */
+	--color-brand-deep: #4a1118; /* 濃：hover/強調 */
+	--color-brand-light: #701f2a; /* 淡：境界線・タグ */
+	--color-gold: #b08d57; /* アンティークゴールド（点使い） */
+	--color-border: #e4dcc9;
+}
+
+.dark {
+	--color-canvas: #15120f; /* 黒に近いチャコール（純黒は避ける） */
+	--color-surface: #1e1916;
+	--color-ink: #f3ece3;
+	--color-ink-muted: #b9ada0;
+	--color-gold: #c6a664; /* 暖色照明を思わせる、少し明るめの金 */
+	--color-border: #332b24;
+}
+
+body {
+	background-color: var(--color-canvas);
+	color: var(--color-ink);
+	font-family: var(--font-body);
+}
+
+/* 横スクロールする狭いナビ等でスクロールバーを隠す（機能は残す） */
+.no-scrollbar {
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+	display: none;
+}

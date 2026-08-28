@@ -16,7 +16,11 @@
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
 		"@inlang/paraglide-js": "^2.18.2",
-		"@sveltejs/adapter-auto": "^7.0.1",
+		"@portabletext/svelte": "^4.0.0",
+		"@portabletext/types": "^4.0.2",
+		"@sanity/client": "^8.4.0",
+		"@sanity/image-url": "^2.1.1",
+		"@sveltejs/adapter-static": "^3.0.10",
 		"@sveltejs/kit": "^2.63.0",
 		"@sveltejs/vite-plugin-svelte": "^7.1.2",
 		"@tailwindcss/typography": "^0.5.19",
