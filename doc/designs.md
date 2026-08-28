@@ -1,0 +1,289 @@
+# JAZZTIME 広島 — サイト設計書 (v1)
+
+> [concept.md](./concept.md) の内容を、実装可能な設計へ落とし込んだもの。
+> 「システム」ではなく **静的サイト + ヘッドレスCMS(Sanity)** という前提で、page構成・コンテンツモデル・デザイン方針・デプロイ構成を定義する。
+
+---
+
+## 0. 前提・確定事項（今回のオーダーより）
+
+| 項目 | 方針 |
+| --- | --- |
+| ホスティング | Cloudflare Pages。ドメインは当面 `*.pages.dev` の仮ドメインでOK。将来、自社ドメインに差し替え |
+| CMS | Sanity（ヘッドレス）。Studio管理UIも同じくCloudflare Pagesにホスト |
+| リポジトリ構成 | pnpmモノレポ。ルート＝サイト本体、`/studio`＝Sanity Studio |
+| サイト⇄CMSの関係 | サイトはビルド時（＋必要なら実行時）にSanityの公開APIを叩くだけ。**サイト側に認証認可は一切持たない**（Studioへのログインのみで運営が完結） |
+| 運営が触る範囲 | ライブスケジュールとブログ（日誌）の投稿のみ。他ページは静的コンテンツとしてコードで管理 |
+| デザインの軸 | concept.md の「ジャズクラブの温かみ」は残しつつ、**クラシックな見やすさ・清潔感・明瞭さ**を優先。ダークモード前提ではなく、ライト/ダーク/システムを切替できる設計 |
+| CSS | Tailwind CSS v4（導入済み） |
+| レスポンシブ方針 | モバイルファースト。ただしPC幅でも間延び・崩れしないことを両立させる |
+
+---
+
+## 1. 技術スタック確定
+
+既存の `package.json` / `vite.config.ts` をベースに、変更点だけ明記する。
+
+| レイヤー | 技術 | 備考 |
+| --- | --- | --- |
+| フレームワーク | SvelteKit 2 / Svelte 5 (runes) | 導入済み |
+| スタイリング | Tailwind CSS v4 + `@tailwindcss/typography` | 導入済み。ブログ本文の装飾に typography プラグインを使う |
+| Markdown | mdsvex | 静的ページ（About等）の本文に使える。CMS本文はPortable Text優先 |
+| i18n | `@inlang/paraglide-js`（ja / en） | 導入済み。ナビ文言・UIラベルはこちらで管理 |
+| CMS | Sanity Studio v4（`/studio`） | 新規導入 |
+| CMSクライアント | `@sanity/client`（読み取り専用） | サイト側の依存として追加 |
+| Adapter | `@sveltejs/adapter-static` に変更 | 現状 `adapter-auto`。理由は §5 参照 |
+| デプロイ | Cloudflare Pages（サイト用・Studio用の2プロジェクト） | §10 参照 |
+
+---
+
+## 2. リポジトリ構成（モノレポ）
+
+```
+hrsm-jazz-time-hp/
+├── src/                      # サイト本体（既存）
+│   ├── routes/
+│   ├── lib/
+│   │   ├── cms/              # Sanityクライアント・GROQクエリ・型
+│   │   ├── components/
+│   │   └── paraglide/
+│   └── ...
+├── messages/                 # 既存（ja.json / en.json）UI文言
+├── studio/                   # 新規：Sanity Studio
+│   ├── sanity.config.ts
+│   ├── sanity.cli.ts
+│   ├── schemaTypes/
+│   │   ├── live.ts
+│   │   ├── journal.ts
+│   │   └── objects/
+│   │       └── localeString.ts
+│   └── package.json
+├── pnpm-workspace.yaml       # packages に studio を追加
+└── doc/
+    ├── concept.md
+    └── designs.md            # 本書
+```
+
+`pnpm-workspace.yaml` に `studio` を追加：
+
+```yaml
+onlyBuiltDependencies:
+  - esbuild
+packages:
+  - 'studio'
+```
+
+> Studioを作成する際は `npm create sanity@latest` の最新の対話式CLI（もしくは `--template clean` 等の非対話フラグ）を使う。手順は都度 [Sanity公式ドキュメント](https://www.sanity.io/docs/studio/installation) の最新版を確認すること（v4系でCLI仕様が変わっている可能性があるため）。
+
+---
+
+## 3. サイトマップ / ルーティング
+
+バー（飲食店）の小規模サイトとして、階層を作らずフラットに5ページのみ。詳細ページ・タブ・サブカテゴリは持たない。
+
+| ルート | 内容 | データソース | 備考 |
+| --- | --- | --- | --- |
+| `/` | Home：Hero、次回ライブ、最新Journal、About抜粋、Access抜粋（電話番号含む） | 静的 + CMS（次回ライブ・Journal最新3〜5件） | ファーストビューは concept.md の「JAZZTIME / LIVE JAZZ IN HIROSHIMA」を踏襲 |
+| `/about` | 店のコンセプト・特徴 | 静的（mdsvex or Svelte） | |
+| `/live` | ライブスケジュール一覧（日付・時間・出演者のみ。詳細ページなし） | CMS | 1ページで完結。過去ライブのアーカイブ表示も持たない |
+| `/journal` | ブログ（日誌）一覧 | CMS | 「NEWS」から改称。§4.2 参照 |
+| `/journal/[slug]` | 記事詳細 | CMS | 一覧のみだと読み物として窮屈なため、Journalのみ詳細ページを残す |
+| `/access` | 住所・地図・営業時間・電話番号 | 静的 | Google Maps埋め込み。問い合わせ手段は電話番号のみなので、独立した`/contact`は作らない |
+
+削除した項目（過剰だったため）：`/live/[slug]`（ライブ詳細）、`/live/archive`（過去ライブ）、`/musicians`（出演者一覧）、`/menu`（ドリンク・フード）、`/contact`（独立の問い合わせページ）。理由と扱いは §4・§11 参照。
+
+各ルートは既存の paraglide 構成（`ja` をデフォルト、`en` を第二言語）にそのまま乗せる。ナビ文言・見出し等のUIコピーは `messages/*.json`、CMSの本文コンテンツはドキュメント内でja/en両方を保持する（§6）。
+
+---
+
+## 4. コンテンツモデル（Sanity スキーマ設計）
+
+運営が触るのは **Live** と **Journal** の2つだけ。ライブは詳細ページを持たず、書く情報は「日付・時間・出演者」のみに絞る（説明文・料金・予約導線などは今回は持たない＝運営の入力負担を最小化）。出演者は独立したドキュメント型（Musician）は用意せず、ライブごとの自由記述テキストとする。
+
+### 4.1 `live`（ライブ）
+
+| フィールド | 型 | 必須 | 備考 |
+| --- | --- | --- | --- |
+| `date` | date | 必須 | `/live`一覧はこの値でソート。過去分は表示しない（アーカイブなし） |
+| `openTime` / `startTime` | string | 任意 | 例："18:30" |
+| `performers` | text（改行区切り、または簡易array of string） | 必須 | 出演者名のみを書く。プロフィールや楽器編成などは持たない |
+
+> 料金・予約要否などは今回のスコープでは持たない。将来必要になれば `live` にフィールド追加すればよい（§12）。
+
+### 4.2 `journal`（日誌／ブログ）
+
+concept.md の「NEWS」をリネーム。運営が思ったことや出来事を綴る、日誌的な見出しにする。
+
+| フィールド | 型 | 必須 | 備考 |
+| --- | --- | --- | --- |
+| `title` | localeString | 必須 | |
+| `slug` | slug | 必須 | |
+| `publishedAt` | datetime | 必須 | |
+| `coverImage` | image | 任意 | 一覧・OGP用 |
+| `body` | Portable Text | 必須 | 画像埋め込み可 |
+| `tag` | string（任意の単一select） | 任意 | 例：Live report / お知らせ / つぶやき。必須のカテゴリー体系は組まず運営の負担を減らす |
+
+> **見出し表記案（要確定）**：日本語「日誌」または「マスターの日記」、英語 "JOURNAL"。ナビでは "NEWS" ではなく上記のようなブログ/日誌トーンの語を採用する。最終コピーは運営と相談して`messages/*.json`に反映。
+
+### 4.3 ローカライズ用オブジェクト型
+
+`journal`（title / body）のみ対象。`live`は今回すべて非ローカライズの単純フィールドのみなので対象外。ドキュメント数を増やさず、1ドキュメント内でja/enを両方管理する方式にする（運営の投稿画面をシンプルに保つため）。
+
+```ts
+// studio/schemaTypes/objects/localeString.ts
+export default {
+  name: 'localeString',
+  type: 'object',
+  fields: [
+    { name: 'ja', type: 'string', title: '日本語' },
+    { name: 'en', type: 'string', title: 'English' }
+  ]
+};
+// localeText / localeBlockContent も同様のパターンで用意
+```
+
+---
+
+## 5. データ取得・ビルド方式（静的サイトの肝）
+
+- 全ページ **ビルド時プリレンダー**（`export const prerender = true` をルート`+layout.ts`に指定）。実行時サーバーは持たない。
+- `/journal/[slug]` のような動的ルートは `entries()` でビルド時にSanityから全slugを取得して列挙する（`live`に詳細ページはないので対象外）。
+- Sanityクライアントは読み取り専用・`useCdn: true` で十分（公開データのみを扱うため書き込みトークンは不要）。
+- **コンテンツ更新の反映**：Sanity側の「投稿（publish）」をフックに、**Sanityの Webhook → Cloudflare Pages の Deploy Hook** を叩いて自動再ビルドする（[Sanity公式ブログの解説](https://www.sanity.io/blog/deploying-a-next-js-site-on-cloudflare-pages-with-webhooks)と同様の構成）。運営は「投稿するだけ」で、数十秒〜数分後にサイトへ反映される。
+- 上記の理由から Adapter は **`@sveltejs/adapter-static`** を採用する（`adapter-auto` から明示的に変更）。サーバーAPIルートを持たない今回のスコープでは、Workers実行環境（`adapter-cloudflare`）より軽量・単純で「単なる静的サイト」という要件に最も合う。将来、問い合わせフォームのサーバー処理やISR的な仕組みが必要になった場合は `adapter-cloudflare` への切替を検討する（§11/§12）。
+
+---
+
+## 6. 多言語 (i18n)
+
+- UIラベル・ナビ・固定ページ本文：既存の `paraglide-js`（`messages/ja.json` / `messages/en.json`）で管理。
+- CMSコンテンツのうち`journal`：§4.3 の `localeString` / `localeText` 方式でドキュメント内にja/en両方を持たせる。英語未入力の場合は日本語にフォールバック表示する実装にする。`live`（出演者名など固有名詞中心）は翻訳対象としない。
+- ルーティングは既存の `localizeHref` の挙動をそのまま踏襲。
+
+---
+
+## 7. デザイン方針
+
+concept.mdのキーワード（Dark / Midnight / Smoke / Warm Light / Deep Red / Gold / Vintage）は活かしつつ、**飲食店として重要な「見やすさ・清潔感」を最優先**にする。ダークモード専用にはせず、ジャズクラブの温かみは「アクセントカラー・タイポグラフィ」に宿らせ、地の配色はライト/ダーク両対応で組む。アクセントは「黒いピアノ＋臙脂のベルベット＋暖色照明＋アンティークゴールド」のイメージを具体的な色に落とし込む（§7.1）。
+
+### 7.1 カラー方針（トークンの考え方）
+
+アクセントカラーは「臙脂〜バーガンディ」領域に確定。ピアノやステージにかかるベルベット／シルクの布を連想させる色で、黒背景・暖色照明・アンティークゴールドと組み合わせたときに"昔ながらのジャズバー感"が最も出る。
+
+| トークン | ライト | ダーク |
+| --- | --- | --- |
+| 背景（base） | アイボリー〜生成り系の明るいニュートラル | チャコール〜黒に近いニュートラル（純黒は避け、わずかに暖色を効かせる） |
+| 文字（ink） | ほぼ黒に近い濃い墨色（純黒は避ける） | 明るいオフホワイト |
+| アクセント（brand） | `#641C24`（臙脂〜バーガンディ） | `#641C24`（同色。黒背景に映えるベルベット感の核） |
+| アクセント（濃淡バリエーション） | `#4A1118`（最も深い・強調/hover用）〜`#701F2A`（やや明るい・境界線や淡いタグ用） | 同左。パネルや強調ブロックの階調に使う |
+| セカンドアクセント（antique gold） | `#B08D57` 前後（真鍮・アンティークゴールド） | 同色、または `#C6A664` 寄りにやや明るく（暖色照明のニュアンス） |
+| 罫線・区切り | 薄いグレー | 薄い暖色寄りグレー |
+
+**運用ルール**
+- バーガンディ（`#641C24`系）は「本文の地色」には使わない。ボタン・見出し下線・カード/パネルの背景・タグ・ホバー状態など、"アクセント"としてのみ使用する（黒 or アイボリーの上に乗せてこそ効くベルベットの色なので、地の背景色に採用すると彩度・視認性の両面で扱いにくい）。
+- アンティークゴールドはリンクのホバー、アイコン、細い罫線・装飾ラインなど「点」で使う。バーガンディと金を両方主役級に使うと重くなるため、面積比は バーガンディ＞ゴールド を基本とする。
+- ライトモードでバーガンディをボタン等の塗りに使う場合、文字色は白〜アイボリーにしてコントラスト比（WCAG AA目安 4.5:1以上）を確保する。バーガンディを地色にした上に暗い文字を乗せない。
+- 候補として挙がった他の臙脂系（`#5A1720` / `#701F2A` / `#4A1118`）は、上記の濃淡バリエーションとしてそのまま採用し、単色で終わらせず階調を作る。
+
+→ 上記はTailwindの`@theme`で`--color-brand-*` / `--color-gold-*`のようなトークンとして定義し、実装時に微調整する。
+
+### 7.2 タイポグラフィ
+
+- 見出し：和文は明朝系（例：Zen Old Mincho 等）、欧文はセリフ（例：Cormorant / Playfair Display 等）で"ジャズクラブのポスター感"を軽く演出。
+- 本文：可読性重視のゴシック/サンセリフ（例：Noto Sans JP + システムUIフォント）。
+- 見出しは効果的に使うのみに留め、本文の可読性を絶対優先（飲食店サイトとして情報が伝わることが最重要）。
+
+### 7.3 レイアウト原則
+
+- 余白を惜しまない。罫線は細く上品に。
+- 写真（店内・ライブ・ドリンク）を主役にできるグリッド／カード設計。
+- 装飾よりも「今日/次回のライブ」「営業時間」「アクセス」「電話」がすぐ見つかることを優先。
+
+---
+
+## 8. ライト/ダーク/システム切替の実装方針
+
+Tailwind CSS v4はCSSファースト設定のため、`class`戦略のダークモードを明示的に定義する。
+
+```css
+/* src/routes/layout.css */
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+@custom-variant dark (&:where(.dark, .dark *));
+```
+
+- `<html>` 要素に `.dark` クラスを付け外しすることでダークモードを切替。
+- 3状態（light / dark / system）を `localStorage` に保存し、`system`時は `prefers-color-scheme` に追従。
+- **FOUC（フラッシュ）防止**のため、`app.html` の `<head>` 内、CSS読み込みより前に同期のインラインスクリプトを置き、初回描画前にテーマを確定させる：
+
+```html
+<!-- src/app.html の <head> 内、他のscriptより前 -->
+<script>
+  (function () {
+    var stored = localStorage.getItem('theme'); // 'light' | 'dark' | 'system' | null
+    var system = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    var mode = stored && stored !== 'system' ? stored : system;
+    document.documentElement.classList.toggle('dark', mode === 'dark');
+  })();
+</script>
+```
+
+- ヘッダーにライト/ダーク/システムの3択トグル（Svelteコンポーネント）を設置。切替時に`localStorage`更新＋`matchMedia`の`change`購読でシステム追従を維持。
+
+---
+
+## 9. レスポンシブ / モバイルファースト方針
+
+- Tailwindの無prefixクラスをモバイル基準とし、`sm:` `md:` `lg:` で段階的に拡張（Tailwind標準のモバイルファースト思想をそのまま採用）。
+- PC幅では本文コンテナに`max-width`（例：`max-w-5xl`〜`max-w-6xl`程度）を持たせ、間延び・行長過多を防ぐ。
+- 優先順位は「①今日・次回のライブ ②電話番号 ③営業時間・場所 ④出演者 ⑤店内の雰囲気（写真）」。モバイルのファーストビュー〜スクロール順にそのまま反映する。
+- モバイルでは「次回ライブ／電話（`tel:`リンク）／アクセス」へのクイックアクセス導線（例：画面下部の固定バー、または折りたたみメニュー内の常時表示ブロック）を検討。PCでは通常のヘッダーナビで代替できるため、固定バーはモバイルのみ表示（`md:hidden`）とする。
+
+---
+
+## 10. デプロイ構成（Cloudflare Pages）
+
+同一GitHubリポジトリから、**Cloudflare Pagesプロジェクトを2つ**作成する（モノレポの「Root directory」機能を使う）。
+
+| プロジェクト | Root directory | ビルドコマンド | 出力ディレクトリ | 用途 |
+| --- | --- | --- | --- | --- |
+| サイト本体 | `/`（デフォルト） | `pnpm build` | `build`（`adapter-static`の既定出力） | 一般公開サイト |
+| Sanity Studio | `studio` | `pnpm exec sanity build` | `dist` | 運営用CMS管理UI |
+
+- どちらも初期は各プロジェクトの `*.pages.dev` ドメインで運用し、本ドメイン確定後にカスタムドメインを割り当てる。
+- Studio側は「非公開でよい」なら Cloudflare Pages側のアクセス制御（Cloudflare Access等）や、単純に**URLを公開しない運用**でも良い。認証はSanity自体のログイン（Google/メール等）に委ねる。
+- **自動反映**：SanityのWebhook設定（Publish時発火）→ サイト本体プロジェクトのDeploy Hook URLを登録。運営がStudioで投稿・公開するだけでサイトが自動的に再ビルド＆再デプロイされる。
+- 環境変数（サイト側）：`PUBLIC_SANITY_PROJECT_ID` / `PUBLIC_SANITY_DATASET` / `PUBLIC_SANITY_API_VERSION`（日付形式）。公開データのみを扱うため書き込みトークンは持たない。
+
+---
+
+## 11. 今回のスコープ外（意図的に外した機能）
+
+- **認証認可**：サイト側には一切実装しない。Studioへのログインのみで運営が完結する設計。
+- **問い合わせページ／フォーム**：独立した`/contact`は作らない。問い合わせ手段は電話番号のみとし、`/access`（およびヘッダー/フッター・モバイル固定バー）に`tel:`リンクとして置く。
+- **ライブ詳細ページ**：`/live`一覧（日付・時間・出演者）のみで完結させ、個別の詳細ページ・説明文・料金・予約導線は持たない。
+- **出演者プロフィール（Musician）**：独立ドキュメント型・専用ページは作らず、ライブごとの自由記述テキストとする。
+- **Menu（ドリンク・フード）**：ページ自体を今回は作らない。
+- **About / Access のCMS化**：更新頻度が低いため、v1はコードで管理する静的コンテンツとする。
+
+---
+
+## 12. 今後の拡張候補（v1では見送り）
+
+- `siteSettings`（singleton）を追加し、営業時間・電話番号などをCMS管理に移行（現状は静的コンテンツとして実装）。
+- `/menu`（ドリンク・フード）ページとMenuドキュメント型の追加。
+- ライブに詳細ページ・料金・予約導線を持たせる拡張（`live`へのフィールド追加＋`/live/[slug]`の新設）。
+- 出演者プロフィールページ（Musicianドキュメント型＋`/musicians`）。
+- 独立した問い合わせ手段が必要になった場合の外部フォームSaaS埋め込み、または`adapter-cloudflare`への切替。
+- 下書きプレビュー（Sanity Presentation / Vision等を使ったプレビュー環境）。
+- ステージング用データセットの分離。
+
+---
+
+## 13. 未決事項（要確認・要決定）
+
+- Sanityのプロジェクト作成（project ID / dataset名の確定。datasetは当面 `production` のみを想定）
+- Cloudflare Pages 2プロジェクトの名称
+- Journalセクションの正式なコピー（「日誌」「マスターの日記」「JOURNAL」等、最終確定）
+- 本ドメイン（決まり次第、両プロジェクトのカスタムドメイン設定を追加するのみ）
