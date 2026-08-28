@@ -1,6 +1,7 @@
 import { defineConfig } from 'sanity';
 import { structureTool } from 'sanity/structure';
 import { visionTool } from '@sanity/vision';
+import { jaJPLocale } from '@sanity/locale-ja-jp';
 import { schemaTypes } from './schemaTypes';
 
 // .env（studio/.env、SANITY_STUDIO_ プレフィックス）を参照する。
@@ -19,7 +20,9 @@ export default defineConfig({
 	title: 'JAZZTIME Studio',
 	projectId: projectId || 'placeholder-project-id',
 	dataset,
-	plugins: [structureTool(), visionTool()],
+	// StudioのUI（管理画面のメニュー・ボタン等）を日本語化する。運営（Studio利用者）向けの設定で、
+	// サイト本体の表示言語（paraglide）とは無関係。
+	plugins: [structureTool(), visionTool(), jaJPLocale()],
 	schema: {
 		types: schemaTypes
 	}

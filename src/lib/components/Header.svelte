@@ -21,35 +21,48 @@
 </script>
 
 <header
-	class="sticky top-0 z-40 border-b border-border bg-canvas/90 backdrop-blur supports-backdrop-filter:bg-canvas/75"
+	class="sticky top-0 z-40 border-b border-border bg-canvas/95 backdrop-blur supports-backdrop-filter:bg-canvas/85"
 >
-	<div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
-		<a href={localePath('/')} class="font-display text-xl font-semibold tracking-wide text-brand">
-			{m.site_name()}
-		</a>
+	<!-- ステージの緞帳のような、臙脂〜ゴールドの帯 -->
+	<div class="h-0.75 bg-linear-to-r from-brand-deep via-brand to-gold"></div>
+
+	<div class="mx-auto max-w-6xl px-4 sm:px-6">
+		<div class="flex items-center justify-between gap-4 py-5 sm:py-6">
+			<a href={localePath('/')} class="flex flex-col leading-none">
+				<span class="font-display text-2xl font-semibold tracking-wide text-brand sm:text-3xl">
+					{m.site_name()}
+				</span>
+				<span
+					class="mt-1.5 hidden text-[0.65rem] font-medium tracking-[0.35em] text-ink-muted uppercase sm:block"
+				>
+					{m.hero_kicker()}
+				</span>
+			</a>
+
+			<div class="flex shrink-0 items-center gap-3 sm:gap-4">
+				<PhoneLink
+					class="hidden items-center gap-2 rounded-full border border-border px-4 py-2 text-sm text-ink hover:border-brand hover:text-brand md:inline-flex"
+				/>
+				<span class="hidden h-6 w-px bg-border md:block"></span>
+				<ThemeToggle />
+			</div>
+		</div>
 
 		<nav
-			class="no-scrollbar flex flex-1 items-center gap-5 overflow-x-auto px-1 text-sm font-medium whitespace-nowrap sm:justify-center sm:gap-8"
+			class="no-scrollbar flex items-center gap-7 overflow-x-auto border-t border-border py-3 text-sm font-medium tracking-wide whitespace-nowrap uppercase sm:justify-center sm:gap-12"
 			aria-label={m.site_name()}
 		>
 			{#each navItems as item (item.href)}
 				<a
 					href={localePath(item.href)}
-					class="transition-colors hover:text-brand {isActive(item.href)
-						? 'text-brand'
-						: 'text-ink-muted'}"
+					class="border-b-2 pb-0.5 transition-colors hover:text-brand {isActive(item.href)
+						? 'border-brand text-brand'
+						: 'border-transparent text-ink-muted'}"
 					aria-current={isActive(item.href) ? 'page' : undefined}
 				>
 					{item.label()}
 				</a>
 			{/each}
 		</nav>
-
-		<div class="flex shrink-0 items-center gap-3">
-			<PhoneLink
-				class="hidden items-center gap-1.5 rounded-full border border-border px-3 py-1.5 text-sm text-ink hover:border-brand hover:text-brand md:inline-flex"
-			/>
-			<ThemeToggle />
-		</div>
 	</div>
 </header>

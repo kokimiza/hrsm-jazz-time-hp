@@ -20,6 +20,10 @@ pnpm --filter studio exec sanity init --env   # 既存プロジェクトを作�
 pnpm --filter studio dev
 ```
 
+## UI言語
+
+管理画面（Studio）は `@sanity/locale-ja-jp` により日本語化済み（[sanity.config.ts](./sanity.config.ts)）。運営がStudioを操作するときのメニュー・ボタン等の表示言語で、サイト本体の表示言語（ja/en、paraglide側）とは別物。
+
 ## デプロイ
 
 Cloudflare Pagesにデプロイする場合は、CFプロジェクトの Root directory を `studio`、ビルドコマンドを `pnpm exec sanity build`、出力ディレクトリを `dist` に設定する（詳細は [../doc/designs.md](../doc/designs.md) §10）。

@@ -10,6 +10,7 @@
 		"start": "sanity start"
 	},
 	"dependencies": {
+		"@sanity/locale-ja-jp": "^1.1.40",
 		"@sanity/vision": "^6.11.0",
 		"react": "^19.2.8",
 		"react-dom": "^19.2.8",
