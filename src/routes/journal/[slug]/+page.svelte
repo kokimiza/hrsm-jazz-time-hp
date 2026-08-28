@@ -21,7 +21,10 @@
 
 <article class="py-14 sm:py-20">
 	<Container class="max-w-3xl">
-		<a href={localePath('/journal')} class="mb-8 inline-block text-sm text-brand hover:underline">
+		<a
+			href={localePath('/journal')}
+			class="mb-8 inline-block text-sm text-brand-ink hover:underline"
+		>
 			← {m.journal_back_to_list()}
 		</a>
 

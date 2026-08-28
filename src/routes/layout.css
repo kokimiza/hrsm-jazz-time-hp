@@ -32,11 +32,18 @@
 	--color-surface: #ffffff; /* カード等の面色 */
 	--color-ink: #201a16; /* 本文文字色（純黒は避ける） */
 	--color-ink-muted: #5c5248; /* 補助テキスト */
-	--color-brand: #641c24; /* 臙脂〜バーガンディ（アクセント本体） */
-	--color-brand-deep: #4a1118; /* 濃：hover/強調 */
+	--color-brand: #641c24; /* 臙脂〜バーガンディ（アクセント本体。塗り＝ボタン/バッジ/帯用。白文字と組む前提でコントラストに余裕がある） */
+	--color-brand-deep: #4a1118; /* 濃：塗りのhover/強調（bg-brand-deep） */
 	--color-brand-light: #701f2a; /* 淡：境界線・タグ */
 	--color-gold: #b08d57; /* アンティークゴールド（点使い） */
 	--color-border: #e4dcc9;
+
+	/* brand-ink：地の色（canvas/surface）に乗せる文字・下線用。ライトモードは brand と同値でOKだが
+	   （地が明るいのでコントラストは十分）、ダークモードでは brand をそのまま文字色に使うと
+	   黒に近い背景の上でほぼ同化して読めなくなる（brand vs dark canvas は 1.5:1 程度しかない）ため、
+	   .dark側だけ明るい色調で個別に上書きする。塗り用の brand/brand-deep には手を入れない。 */
+	--color-brand-ink: var(--color-brand);
+	--color-brand-ink-hover: var(--color-brand-deep);
 }
 
 .dark {
@@ -46,6 +53,11 @@
 	--color-ink-muted: #b9ada0;
 	--color-gold: #c6a664; /* 暖色照明を思わせる、少し明るめの金 */
 	--color-border: #332b24;
+
+	/* 同じ臙脂の色相・彩度を保ったまま明度だけ上げ、黒背景でもWCAG AA（4.5:1）を満たす文字色にする。
+	   hover側はさらに明るくして「灯りを受けて浮き上がる」方向に強調する。 */
+	--color-brand-ink: #d1616d; /* vs canvas 5.0:1 / vs surface 4.7:1 */
+	--color-brand-ink-hover: #d98c95; /* vs canvas 7.2:1 / vs surface 6.7:1 */
 }
 
 body {

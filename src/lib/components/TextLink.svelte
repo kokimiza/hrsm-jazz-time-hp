@@ -14,7 +14,7 @@
 <!-- eslint-disable svelte/no-navigation-without-resolve -->
 <a
 	{href}
-	class="group inline-flex items-center gap-1.5 text-sm font-medium text-brand hover:text-brand-deep {className}"
+	class="group inline-flex items-center gap-1.5 text-sm font-medium text-brand-ink hover:text-brand-ink-hover {className}"
 >
 	<span class="border-b border-transparent group-hover:border-current">{@render children()}</span>
 	<ArrowIcon class="transition-transform duration-200 ease-out group-hover:translate-x-1" />

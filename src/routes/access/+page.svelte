@@ -37,7 +37,7 @@
 			<div>
 				<h2 class="mb-1 text-sm font-medium text-ink-muted">{m.access_phone_heading()}</h2>
 				<PhoneLink
-					class="inline-flex items-center gap-2 text-lg text-brand hover:text-brand-deep"
+					class="inline-flex items-center gap-2 text-lg text-brand-ink hover:text-brand-ink-hover"
 				/>
 			</div>
 

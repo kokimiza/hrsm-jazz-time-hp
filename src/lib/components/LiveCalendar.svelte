@@ -32,7 +32,7 @@
 	<div class="grain divide-y divide-border rounded-2xl border border-border bg-surface">
 		{#each groups as group (group.key)}
 			<section class="px-5 py-6 sm:px-8">
-				<h2 class="mb-4 font-display text-lg font-semibold text-brand sm:text-xl">
+				<h2 class="mb-4 font-display text-lg font-semibold text-brand-ink sm:text-xl">
 					{group.heading}
 				</h2>
 				<ul class="divide-y divide-border/70">

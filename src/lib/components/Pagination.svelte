@@ -13,7 +13,7 @@
 {#if totalPages > 1}
 	<nav class="mt-8 flex items-center justify-between" aria-label="pagination">
 		{#if page > 1}
-			<a href={localePath(prevHref)} class="text-sm font-medium text-brand hover:underline">
+			<a href={localePath(prevHref)} class="text-sm font-medium text-brand-ink hover:underline">
 				← {m.pagination_prev()}
 			</a>
 		{:else}
@@ -25,7 +25,7 @@
 		</span>
 
 		{#if page < totalPages}
-			<a href={localePath(nextHref)} class="text-sm font-medium text-brand hover:underline">
+			<a href={localePath(nextHref)} class="text-sm font-medium text-brand-ink hover:underline">
 				{m.pagination_next()} →
 			</a>
 		{:else}

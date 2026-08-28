@@ -12,7 +12,7 @@
 	<div class="grid grid-cols-3">
 		<a
 			href={localePath('/live')}
-			class="flex flex-col items-center gap-1 py-2.5 text-xs text-ink-muted hover:text-brand"
+			class="flex flex-col items-center gap-1 py-2.5 text-xs text-ink-muted hover:text-brand-ink"
 		>
 			<svg
 				viewBox="0 0 24 24"
@@ -33,12 +33,12 @@
 
 		<PhoneLink
 			label={m.phone_label()}
-			class="flex flex-col items-center gap-1 border-x border-border py-2.5 text-xs text-ink-muted hover:text-brand"
+			class="flex flex-col items-center gap-1 border-x border-border py-2.5 text-xs text-ink-muted hover:text-brand-ink"
 		/>
 
 		<a
 			href={localePath('/access')}
-			class="flex flex-col items-center gap-1 py-2.5 text-xs text-ink-muted hover:text-brand"
+			class="flex flex-col items-center gap-1 py-2.5 text-xs text-ink-muted hover:text-brand-ink"
 		>
 			<svg
 				viewBox="0 0 24 24"

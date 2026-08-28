@@ -11,7 +11,7 @@
 </script>
 
 <Container class="py-14 sm:py-20">
-	<a href={localePath('/live')} class="mb-8 inline-block text-sm text-brand hover:underline">
+	<a href={localePath('/live')} class="mb-8 inline-block text-sm text-brand-ink hover:underline">
 		← {m.live_archive_back()}
 	</a>
 

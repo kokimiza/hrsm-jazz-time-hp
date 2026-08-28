@@ -30,7 +30,7 @@
 	<div class="flex flex-1 flex-col gap-2 p-5">
 		<p class="text-xs text-ink-muted">{formatDate(entry.publishedAt, locale)}</p>
 		<h3 class="font-display text-lg font-semibold text-ink">{entry.title}</h3>
-		<span class="mt-auto flex items-center gap-1.5 pt-2 text-sm font-medium text-brand">
+		<span class="mt-auto flex items-center gap-1.5 pt-2 text-sm font-medium text-brand-ink">
 			<span class="border-b border-transparent group-hover:border-current"
 				>{m.journal_read_more()}</span
 			>

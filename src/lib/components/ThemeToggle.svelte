@@ -7,7 +7,7 @@
 <button
 	type="button"
 	onclick={() => theme.toggle()}
-	class="inline-flex size-9 items-center justify-center rounded-full border border-border text-ink-muted transition-colors hover:border-brand hover:text-brand"
+	class="inline-flex size-9 items-center justify-center rounded-full border border-border text-ink-muted transition-colors hover:border-brand-ink hover:text-brand-ink"
 	aria-label={m.theme_toggle_label()}
 	title={m.theme_toggle_label()}
 >
