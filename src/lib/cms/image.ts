@@ -1,4 +1,4 @@
-import createImageUrlBuilder from '@sanity/image-url';
+import { createImageUrlBuilder } from '@sanity/image-url';
 import { env } from '$env/dynamic/public';
 import type { SanityImageRef } from './types';
 

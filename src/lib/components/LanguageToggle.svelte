@@ -3,17 +3,22 @@
 	import { resolve } from '$app/paths';
 	import { page } from '$app/state';
 	import * as m from '$lib/paraglide/messages.js';
-	import { getLocale, locales, localizeHref } from '$lib/paraglide/runtime';
+	import { deLocalizeHref, getLocale, locales, localizeHref } from '$lib/paraglide/runtime';
 
 	// ロケールは ja/en の2つだけなので、トグルボタン1つで「今と違う方」に切り替える。
 	const otherLocale = $derived(locales.find((locale) => locale !== getLocale()) ?? locales[0]);
-	const href = $derived(
-		resolve(localizeHref(page.url.pathname, { locale: otherLocale }) as Pathname)
-	);
+	// localizeHrefにはロケールprefix無しの正規パスを渡す必要がある（例: /en/about → /about）。
+	// 現在のURLをそのまま渡すと、EN版にいるときに「切替先のhrefがEN版のまま」になるバグになる。
+	const canonicalPath = $derived(deLocalizeHref(page.url.pathname));
+	const href = $derived(resolve(localizeHref(canonicalPath, { locale: otherLocale }) as Pathname));
 </script>
 
+<!-- data-sveltekit-reload: ロケール切替はSPA遷移ではなく必ずフルページ遷移にする。
+     SvelteKitのクライアントサイド遷移だとURLは変わっても表示中のロケール（文言）が
+     再評価されず、見た目上「何も変わらない」状態になってしまうため。 -->
 <a
 	{href}
+	data-sveltekit-reload
 	class="inline-flex size-9 items-center justify-center rounded-full border border-border text-ink-muted transition-colors hover:border-brand hover:text-brand"
 	aria-label={m.language_toggle_label()}
 	title={otherLocale.toUpperCase()}
