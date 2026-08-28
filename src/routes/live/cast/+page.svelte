@@ -3,6 +3,7 @@
 	import Container from '$lib/components/Container.svelte';
 	import { urlFor } from '$lib/cms/image';
 	import { localePath } from '$lib/i18n';
+	import unknownIcon from '$lib/assets/unknown.jpg';
 
 	let { data } = $props();
 </script>
@@ -29,15 +30,11 @@
 				<article
 					class="grain flex flex-col items-center gap-3 rounded-2xl border border-border bg-surface p-6 text-center"
 				>
-					{#if urlFor(member.icon, 200)}
-						<img src={urlFor(member.icon, 200)} alt="" class="size-20 rounded-full object-cover" />
-					{:else}
-						<div
-							class="flex size-20 items-center justify-center rounded-full bg-canvas font-display text-2xl text-ink-muted"
-						>
-							{member.name.slice(0, 1)}
-						</div>
-					{/if}
+					<img
+						src={urlFor(member.icon, 200) ?? unknownIcon}
+						alt=""
+						class="size-20 rounded-full border border-border object-cover"
+					/>
 					<h2 class="font-display text-lg font-semibold text-ink">{member.name}</h2>
 					{#if member.bio}
 						<p class="text-sm text-ink-muted">{member.bio}</p>
