@@ -8,9 +8,16 @@ function today(): string {
 
 // performers[].cast はcastマスタへの参照。表示用に名前をデリファレンスして
 // 従来通り `{ name, instrument }` の形でサイト側に渡す（表示コンポーネント側は変更不要）。
-const liveProjection = `{ _id, date, performers[]{ "name": cast->name, instrument }, note }`;
+// 店休日はperformersを持たないので、コンポーネント側の null チェックを増やさないよう空配列に揃える。
+const liveProjection = `{
+	_id,
+	date,
+	"performers": coalesce(performers[]{ "name": cast->name, instrument }, []),
+	note,
+	closed
+}`;
 
-/** 今後のライブ一覧（開催日が近い順）。過去分・詳細ページは持たない。 */
+/** 今後のライブ一覧（開催日が近い順）。過去分・詳細ページは持たない。店休日も一覧に含めて表示する。 */
 export async function getUpcomingLives(): Promise<LiveEntry[]> {
 	return safeFetch<LiveEntry[]>(
 		`*[_type == "live" && date >= $today] | order(date asc) ${liveProjection}`,
@@ -19,10 +26,10 @@ export async function getUpcomingLives(): Promise<LiveEntry[]> {
 	);
 }
 
-/** 次回ライブ（Home用）。 */
+/** 次回ライブ（Home用）。店休日は「次回のライブ」ではないので対象外にする。 */
 export async function getNextLive(): Promise<LiveEntry | null> {
 	return safeFetch<LiveEntry | null>(
-		`*[_type == "live" && date >= $today] | order(date asc)[0] ${liveProjection}`,
+		`*[_type == "live" && date >= $today && closed != true] | order(date asc)[0] ${liveProjection}`,
 		{ today: today() },
 		null
 	);

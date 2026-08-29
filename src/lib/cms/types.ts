@@ -15,8 +15,11 @@ export interface Performer {
 export interface LiveEntry {
 	_id: string;
 	date: string; // "YYYY-MM-DD"
+	/** 出演ライブなら通常配列。店休日（closed: true）は空/未設定になる。 */
 	performers: Performer[];
 	note?: string;
+	/** trueなら店休日（臨時休業・貸切など）。performersは空で扱われる。 */
+	closed?: boolean;
 }
 
 /** キャスト（出演ミュージシャン）マスタ。Liveの出演者はここへの参照で選ばれる。 */
