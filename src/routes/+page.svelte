@@ -57,7 +57,7 @@
 
 <!-- Next Live -->
 <section class="grain border-y border-border bg-surface">
-	<Container class="py-14 sm:py-20">
+	<Container class="py-16 sm:py-24">
 		<h2 class="mb-6 font-display text-2xl font-semibold text-ink sm:text-3xl">
 			{m.next_live_heading()}
 		</h2>
@@ -108,19 +108,20 @@
 {/if}
 
 <!-- Access excerpt -->
+<!-- 他2つの抜粋（About/Journal）は見出し→本文→CTAの同じ順・同じ余白で並ぶため、ここだけ意図的に型を崩す。
+     住所を主役にして見出しを下に添え、CTAも箱ボタンではなく矢印リンクにする＝「扉の脇に貼られた案内書き」のような、
+     肩肘張らない締め方。ページ全体の抑揚として、最後のセクションだけ静かに終わる。 -->
 <section>
-	<Container
-		class="flex flex-col gap-6 py-14 sm:py-20 md:flex-row md:items-center md:justify-between"
-	>
-		<div class="space-y-2">
-			<h2 class="font-display text-2xl font-semibold text-ink sm:text-3xl">
-				{m.home_access_heading()}
-			</h2>
+	<Container class="border-t border-border py-10 sm:py-14">
+		<div class="flex flex-col items-start gap-2">
 			<p class="text-ink-muted">
 				{m.address_line1()}
 				{m.address_line2()}
 			</p>
+			<h2 class="font-display text-xl font-semibold text-ink sm:text-2xl">
+				{m.home_access_heading()}
+			</h2>
+			<TextLink href={localePath('/access')} class="mt-2">{m.home_access_cta()}</TextLink>
 		</div>
-		<Button href={localePath('/access')} variant="secondary">{m.home_access_cta()}</Button>
 	</Container>
 </section>

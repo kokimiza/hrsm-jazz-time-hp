@@ -31,3 +31,4 @@ studio/dist
 
 # AI
 .claude
+.agents

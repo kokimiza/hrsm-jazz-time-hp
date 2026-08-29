@@ -16,9 +16,14 @@
 >
 	<div
 		aria-hidden="true"
-		class="w-full bg-brand py-1 text-center text-[16px] font-semibold tracking-widest text-white uppercase"
+		class="relative w-full bg-brand py-1 text-center text-[16px] font-semibold tracking-widest text-white uppercase"
 	>
 		{parts.month}
+		<!-- 月タブと日付面の継ぎ目に「ミシン目」を1本。切り離した卓上カレンダーの紙の質感を、
+		     テーマ色に依存しない形（canvas色の穴あき）で表現する。 -->
+		<span
+			class="absolute inset-x-0 -bottom-0.75 h-1.5 bg-[radial-gradient(circle,var(--color-canvas)_1.6px,transparent_1.7px)] bg-size-[7px_7px] bg-position-[2.5px_center] bg-repeat-x"
+		></span>
 	</div>
 	<div aria-hidden="true" class="flex flex-1 flex-col items-center justify-center gap-0.5 py-2">
 		<span class="font-display text-2xl leading-none font-semibold text-ink">{parts.day}</span>
