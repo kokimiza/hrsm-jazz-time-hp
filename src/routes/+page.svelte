@@ -5,6 +5,7 @@
 	import TextLink from '$lib/components/TextLink.svelte';
 	import LiveCard from '$lib/components/LiveCard.svelte';
 	import JournalCard from '$lib/components/JournalCard.svelte';
+	import MasterProfile from '$lib/components/MasterProfile.svelte';
 	import { localePath } from '$lib/i18n';
 	// 元写真(jazztime-interior.png, 4000x3000/7.5MB)はモバイルファーストの表示コストには重すぎるため、
 	// リサイズ・WebP圧縮したものをヒーローに使う（元ファイルはsrc/lib/assetsにそのまま残してある）。
@@ -85,6 +86,16 @@
 		<TextLink href={localePath('/about')} class="md:justify-self-end">
 			{m.home_about_cta()}
 		</TextLink>
+	</Container>
+</section>
+
+<!-- Master -->
+<section>
+	<Container class="py-14 sm:py-20">
+		<h2 class="mb-6 font-display text-2xl font-semibold text-ink sm:text-3xl">
+			{m.home_master_heading()}
+		</h2>
+		<MasterProfile />
 	</Container>
 </section>
 

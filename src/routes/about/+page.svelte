@@ -33,15 +33,15 @@
 					<tr>
 						<th
 							scope="row"
-							class="w-32 bg-surface px-4 py-4 text-left align-top text-sm font-medium text-ink-muted sm:w-40 sm:px-6"
+							class="w-32 bg-surface px-4 py-4 text-left align-top text-base font-medium text-ink-muted sm:w-40 sm:px-6"
 						>
 							{row.label()}
 						</th>
-						<td class="px-4 py-4 align-top text-ink sm:px-6">
+						<td class="px-4 py-4 align-top text-base text-ink sm:px-6">
 							{row.value()}
 							{#if row.note}
 								<br />
-								<span class="text-sm text-ink-muted">{row.note()}</span>
+								<span class="text-base text-ink-muted">{row.note()}</span>
 							{/if}
 						</td>
 					</tr>
