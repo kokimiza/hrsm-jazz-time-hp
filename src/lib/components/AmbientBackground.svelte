@@ -10,5 +10,5 @@
 	alt=""
 	aria-hidden="true"
 	fetchpriority="low"
-	class="pointer-events-none fixed inset-0 -z-10 h-full w-full scale-110 object-cover opacity-[0.05] blur-2xl dark:opacity-[0.08]"
+	class="pointer-events-none fixed inset-0 -z-10 h-full w-full scale-110 object-cover opacity-[0.38] blur-2xl"
 />

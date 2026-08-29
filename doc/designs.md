@@ -14,7 +14,7 @@
 | リポジトリ構成   | pnpmモノレポ。ルート＝サイト本体、`/studio`＝Sanity Studio                                                                                                        |
 | サイト⇄CMSの関係 | サイトはビルド時（＋必要なら実行時）にSanityの公開APIを叩くだけ。**サイト側に認証認可は一切持たない**（Studioへのログインのみで運営が完結）                       |
 | 運営が触る範囲   | ライブスケジュールとブログ（日誌）の投稿のみ。他ページは静的コンテンツとしてコードで管理                                                                          |
-| デザインの軸     | concept.md の「ジャズクラブの温かみ」は残しつつ、**クラシックな見やすさ・清潔感・明瞭さ**を優先。ダークモード前提ではなく、ライト/ダーク/システムを切替できる設計 |
+| デザインの軸     | concept.md の「ジャズクラブの温かみ」は残しつつ、**クラシックな見やすさ・清潔感・明瞭さ**を優先。既定表示はダーク（ジャズクラブの夜の雰囲気を初回訪問時から出す）。ライト/ダークはヘッダーのトグルでいつでも手動切替できる設計（§8） |
 | CSS              | Tailwind CSS v4（導入済み）                                                                                                                                       |
 | レスポンシブ方針 | モバイルファースト。ただしPC幅でも間延び・崩れしないことを両立させる                                                                                              |
 
@@ -28,11 +28,11 @@
 | --------------- | ----------------------------------------------------- | --------------------------------------------------------------- |
 | フレームワーク  | SvelteKit 2 / Svelte 5 (runes)                        | 導入済み                                                        |
 | スタイリング    | Tailwind CSS v4 + `@tailwindcss/typography`           | 導入済み。ブログ本文の装飾に typography プラグインを使う        |
-| Markdown        | mdsvex                                                | 静的ページ（About等）の本文に使える。CMS本文はPortable Text優先 |
+| Markdown        | mdsvex                                                | `vite.config.ts`で`.svx`/`.md`拡張子を有効化済みだが、現状`src/routes`配下に`.svx`/`.md`ファイルは無く未使用（Aboutは表データをSvelteコンポーネントで直接組んでいる）。CMS本文はPortable Text |
 | i18n            | `@inlang/paraglide-js`（ja / en）                     | 導入済み。ナビ文言・UIラベルはこちらで管理                      |
-| CMS             | Sanity Studio v4（`/studio`）                         | 新規導入                                                        |
+| CMS             | Sanity Studio（`sanity` ^6.11.0、`/studio`）           | 導入済み                                                        |
 | CMSクライアント | `@sanity/client`（読み取り専用）                      | サイト側の依存として追加                                        |
-| Adapter         | `@sveltejs/adapter-static` に変更                     | 現状 `adapter-auto`。理由は §5 参照                             |
+| Adapter         | `@sveltejs/adapter-static`                            | 導入済み（`adapter-auto`から変更済み）。理由は §5 参照           |
 | デプロイ        | Cloudflare Pages（サイト用・Studio用の2プロジェクト） | §10 参照                                                        |
 
 ---
@@ -74,7 +74,7 @@ packages:
   - 'studio'
 ```
 
-> Studioを作成する際は `npm create sanity@latest` の最新の対話式CLI（もしくは `--template clean` 等の非対話フラグ）を使う。手順は都度 [Sanity公式ドキュメント](https://www.sanity.io/docs/studio/installation) の最新版を確認すること（v4系でCLI仕様が変わっている可能性があるため）。
+> Studioは作成済み（`studio/`、`sanity` ^6.11.0）。プロジェクトを作り直す場合は `npm create sanity@latest` の最新の対話式CLI（もしくは `--template clean` 等の非対話フラグ）を使う。手順は都度 [Sanity公式ドキュメント](https://www.sanity.io/docs/studio/installation) の最新版を確認すること（CLI仕様はメジャーバージョンごとに変わりうるため）。
 
 ---
 
@@ -84,8 +84,8 @@ packages:
 
 | ルート                 | 内容                                                                       | データソース                                | 備考                                                                                  |
 | ---------------------- | -------------------------------------------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `/`                    | Home：Hero、次回ライブ、最新Journal、About抜粋、Access抜粋（電話番号含む） | 静的 + CMS（次回ライブ・Journal最新3〜5件） | ファーストビューは concept.md の「JAZZTIME / LIVE JAZZ IN HIROSHIMA」を踏襲           |
-| `/about`               | 案内（店のルール：営業時間・演奏時間・支払い・定休日等）                   | 静的（Svelte）                              | 見出しは日本語で「案内」（ナビ表示も同様）。§4以下参照                                |
+| `/`                    | Home：Hero、次回ライブ、About抜粋、最新Journal（0件時は非表示）、Access抜粋 | 静的 + CMS（次回ライブ・Journal最新3件） | ファーストビューは concept.md の「JAZZTIME / LIVE JAZZ IN HIROSHIMA」を踏襲           |
+| `/about`               | 案内（来店前の確認事項を表形式で1本化：営業時間・演奏時間・お支払い・定休日・セッションナイト） | 静的（Svelte）                              | 見出しは日本語で「ご案内」（ナビ表示も同様）。ラベル文言は`messages/*.json`（`about_*`）で管理。§4以下参照 |
 | `/live`                | ライブスケジュール一覧（日付・出演者のみ。詳細ページなし）                 | CMS                                         | 今後の予定のみ、開催日昇順。末尾に過去ライブアーカイブへのリンク                      |
 | `/live/archive`        | 過去ライブのアーカイブ（1ページ目）                                        | CMS                                         | 開催日が新しい順。1ページ12件でページング                                             |
 | `/live/archive/[page]` | 過去ライブのアーカイブ（2ページ目以降）                                    | CMS                                         | `entries()`でページ数分をビルド時に列挙                                               |
@@ -146,7 +146,7 @@ concept.md の「NEWS」をリネーム。運営が思ったことや出来事�
 
 削除した項目：`publishedAt`（Sanity標準の`_createdAt`をそのまま「投稿日時」として使う。運営に別途入力させない）、`tag`（不要と判断し廃止）、`excerpt`（一覧・詳細どちらも本文冒頭やタイトルで十分と判断し廃止）、`coverImage.alt`（運営に毎回書かせず固定文言に）。
 
-> **見出し表記案（要確定）**：日本語「日誌」または「マスターの日記」、英語 "JOURNAL"。ナビでは "NEWS" ではなく上記のようなブログ/日誌トーンの語を採用する。最終コピーは運営と相談して`messages/*.json`に反映。
+> **見出し表記**：日本語「日誌」、英語 "JOURNAL" に確定（`messages/ja.json` / `messages/en.json` の `nav_journal` / `journal_page_heading`）。ナビでは "NEWS" ではなく上記のブログ/日誌トーンの語を採用している。
 
 ---
 
@@ -164,7 +164,7 @@ concept.md の「NEWS」をリネーム。運営が思ったことや出来事�
 
 日誌（journal）は投稿するたびにページが増えていく。手作業でサイトマップを更新する運用にはしたくないので、`sitemap.xml`をビルド時にCMSへ問い合わせて自動生成する。ブログの内容が検索エンジンに拾われやすくする＝SEO対策そのもの。
 
-- `src/routes/sitemap.xml/+server.ts`：`prerender = true`のエンドポイント。ビルドのたびに`getAllJournalEntries()`・`getPastLivesCount()`でSanityから最新の一覧・件数を取得し、固定ページ（`/` `/about` `/live` `/live/archive` `/journal` `/access`）＋journal記事＋ライブアーカイブの各ページすべての`<url>`を書き出す。ja/en両ロケール分のURLを列挙し、`hreflang`の`alternate`リンクで互いを参照させる（多言語サイトのSEOのベストプラクティス）。
+- `src/routes/sitemap.xml/+server.ts`：`prerender = true`のエンドポイント。ビルドのたびに`getAllJournalEntries()`・`getPastLivesCount()`でSanityから最新の一覧・件数を取得し、固定ページ（`/` `/about` `/live` `/live/archive` `/live/cast` `/journal` `/access`）＋journal記事＋ライブアーカイブの各ページすべての`<url>`を書き出す。ja/en両ロケール分のURLを列挙し、`hreflang`の`alternate`リンクで互いを参照させる（多言語サイトのSEOのベストプラクティス）。
 - `src/routes/robots.txt/+server.ts`：同じく`prerender = true`のエンドポイント（`static/robots.txt`は廃止しこちらに一本化）。`Sitemap: <サイトURL>/sitemap.xml`の1行を含めて出力する。
 - 運用の流れ：**運営が日誌を投稿 → Sanity Webhookが発火 → Cloudflare Pagesが再ビルド → `sitemap.xml`も自動的に新しい記事を含んで再生成される。** 手動更新は一切不要。
 - 絶対URLの組み立てには`PUBLIC_SITE_URL`環境変数（§10）を使う。仮ドメイン運用中も`*.pages.dev`のURLを設定しておけば動き、本ドメインに切り替わったら値を差し替えるだけでよい。
@@ -230,9 +230,9 @@ concept.mdのキーワード（Dark / Midnight / Smoke / Warm Light / Deep Red /
 
 ---
 
-## 8. ライト/ダーク/システム切替の実装方針
+## 8. ライト/ダーク切替の実装方針
 
-Tailwind CSS v4はCSSファースト設定のため、`class`戦略のダークモードを明示的に定義する。
+Tailwind CSS v4はCSSファースト設定のため、`class`戦略のダークモードを明示的に定義する（[layout.css](../src/routes/layout.css)）。
 
 ```css
 /* src/routes/layout.css */
@@ -243,22 +243,26 @@ Tailwind CSS v4はCSSファースト設定のため、`class`戦略のダーク�
 ```
 
 - `<html>` 要素に `.dark` クラスを付け外しすることでダークモードを切替。
-- 3状態（light / dark / system）を `localStorage` に保存し、`system`時は `prefers-color-scheme` に追従。
+- **2状態（light / dark）のみ**。当初検討していた「system」（`prefers-color-scheme`に追従する第3状態）は採用していない——バー営業時間帯の店舗サイトとして「常に暗めの雰囲気で見せたい」という意図から、**未選択時のデフォルトはOS設定に関わらず常にダーク**にしている（[theme.svelte.ts](../src/lib/stores/theme.svelte.ts)の`DEFAULT_MODE`）。
+- 選択状態は`localStorage`のキー`jazztime-theme`に`'light'`または`'dark'`として保存する（それ以外の値・未設定はデフォルトのダーク扱い）。
 - **FOUC（フラッシュ）防止**のため、`app.html` の `<head>` 内、CSS読み込みより前に同期のインラインスクリプトを置き、初回描画前にテーマを確定させる：
 
 ```html
 <!-- src/app.html の <head> 内、他のscriptより前 -->
 <script>
 	(function () {
-		var stored = localStorage.getItem('theme'); // 'light' | 'dark' | 'system' | null
-		var system = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-		var mode = stored && stored !== 'system' ? stored : system;
-		document.documentElement.classList.toggle('dark', mode === 'dark');
+		try {
+			var stored = localStorage.getItem('jazztime-theme');
+			var resolved = stored === 'light' ? 'light' : 'dark';
+			if (resolved === 'dark') document.documentElement.classList.add('dark');
+		} catch (e) {}
 	})();
 </script>
 ```
 
-- ヘッダーにライト/ダーク/システムの3択トグル（Svelteコンポーネント）を設置。切替時に`localStorage`更新＋`matchMedia`の`change`購読でシステム追従を維持。
+  ストレージキー（`jazztime-theme`）は[theme.svelte.ts](../src/lib/stores/theme.svelte.ts)の`THEME_STORAGE_KEY`と二重管理のため、変更する場合は両方を揃えること（コード側にもその旨のコメントあり）。
+
+- ヘッダーに[ThemeToggle.svelte](../src/lib/components/ThemeToggle.svelte)（ライト⇄ダークのアイコン1つのトグルボタン。月/太陽アイコンで現在の状態を示す）を設置。押すたびに`light`/`dark`を反転し、`localStorage`へ即保存する。システム設定の変化を監視する`matchMedia`の`change`購読は持たない（システム追従自体を機能として持たないため）。
 
 ---
 
@@ -267,7 +271,7 @@ Tailwind CSS v4はCSSファースト設定のため、`class`戦略のダーク�
 - Tailwindの無prefixクラスをモバイル基準とし、`sm:` `md:` `lg:` で段階的に拡張（Tailwind標準のモバイルファースト思想をそのまま採用）。
 - PC幅では本文コンテナに`max-width`（例：`max-w-5xl`〜`max-w-6xl`程度）を持たせ、間延び・行長過多を防ぐ。
 - 優先順位は「①今日・次回のライブ ②電話番号 ③営業時間・場所 ④出演者 ⑤店内の雰囲気（写真）」。モバイルのファーストビュー〜スクロール順にそのまま反映する。
-- モバイルでは「次回ライブ／電話（`tel:`リンク）／アクセス」へのクイックアクセス導線（例：画面下部の固定バー、または折りたたみメニュー内の常時表示ブロック）を検討。PCでは通常のヘッダーナビで代替できるため、固定バーはモバイルのみ表示（`md:hidden`）とする。
+- モバイルでは「ライブ／電話（`tel:`リンク）／アクセス」への画面下部固定クイックバー（[MobileQuickBar.svelte](../src/lib/components/MobileQuickBar.svelte)、3カラムグリッド）を実装済み。PCでは通常のヘッダーナビで代替できるため、`md:hidden`でモバイルのみ表示する。`env(safe-area-inset-bottom)`分の余白を確保し、iOSのホームインジケーターと重ならないようにしている。
 
 ---
 
@@ -307,14 +311,13 @@ Tailwind CSS v4はCSSファースト設定のため、`class`戦略のダーク�
 - `/menu`（ドリンク・フード）ページとMenuドキュメント型の追加。
 - ライブに詳細ページ・料金・予約導線を持たせる拡張（`live`へのフィールド追加＋`/live/[slug]`の新設）。
 - 独立した問い合わせ手段が必要になった場合の外部フォームSaaS埋め込み、または`adapter-cloudflare`への切替。
-- 下書きプレビュー（Sanity Presentation / Vision等を使ったプレビュー環境）。
+- 下書きプレビュー（公開前のコンテンツをサイト側の見た目で確認できる環境。Sanity Presentation等）。なお`visionTool`はGROQクエリのデバッグ用として既にStudioに導入済みだが（[sanity.config.ts](../studio/sanity.config.ts)）、これは下書きプレビューとは別機能。
 - ステージング用データセットの分離。
 
 ---
 
 ## 13. 未決事項（要確認・要決定）
 
-- Sanityのプロジェクト作成（project ID / dataset名の確定。datasetは当面 `production` のみを想定）
+- Sanityのプロジェクト作成（project ID / dataset名の確定。datasetは当面 `production` のみを想定。`.env.example`は現状project ID未設定のプレースホルダーのまま）
 - Cloudflare Pages 2プロジェクトの名称
-- Journalセクションの正式なコピー（「日誌」「マスターの日記」「JOURNAL」等、最終確定）
-- 本ドメイン（決まり次第、両プロジェクトのカスタムドメイン設定を追加し、サイト側の`PUBLIC_SITE_URL`を差し替える）
+- 本ドメイン（決まり次第、両プロジェクトのカスタムドメイン設定を追加し、サイト側の`PUBLIC_SITE_URL`を差し替える。`.env.example`には仮の`https://hiroshima-jazztime.pages.dev`を置いている）
