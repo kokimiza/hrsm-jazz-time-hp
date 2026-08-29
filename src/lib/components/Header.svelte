@@ -28,11 +28,12 @@
 	function updateIndicator() {
 		const activeHref = navItems.find((item) => isActive(item.href))?.href;
 		const el = activeHref ? linkEls[activeHref] : undefined;
-		if (!el) {
-			indicator = { ...indicator, ready: false };
-			return;
-		}
-		indicator = { x: el.offsetLeft, width: el.offsetWidth, ready: true };
+		// `indicator` 自体は読まずに書く。読んでしまうと、この関数を呼んでいる $effect が
+		// 自分で書いた `indicator` の変化を検知してまた自分を再実行する無限ループになる
+		// （Home（'/'）はnavItemsのどれにも一致しないため、このelse分岐に毎回入っていた）。
+		indicator = el
+			? { x: el.offsetLeft, width: el.offsetWidth, ready: true }
+			: { x: 0, width: 0, ready: false };
 	}
 
 	$effect(() => {
