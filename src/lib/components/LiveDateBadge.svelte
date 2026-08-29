@@ -3,8 +3,11 @@
 	import { formatDate, formatDateParts } from '$lib/format';
 	import type { Locale } from '$lib/paraglide/runtime';
 
-	let { date, locale, closed = false }: { date: string; locale: Locale; closed?: boolean } =
-		$props();
+	let {
+		date,
+		locale,
+		closed = false
+	}: { date: string; locale: Locale; closed?: boolean } = $props();
 
 	const parts = $derived(formatDateParts(date, locale));
 	// 店休日は見た目のグレーアウトだけでなく、読み上げでも「店休」であることが分かるようにする。

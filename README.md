@@ -74,12 +74,12 @@ Studio自体の初回セットアップ（Sanityアカウントでのログイ�
 
 サイト本体（このディレクトリ）の `.env` / Cloudflare Pagesの環境変数：
 
-| 変数名                        | 内容                                                                       |
-| ------------------------------ | -------------------------------------------------------------------------- |
-| `PUBLIC_SANITY_PROJECT_ID`     | SanityのプロジェクトID                                                     |
-| `PUBLIC_SANITY_DATASET`        | 通常`production`                                                           |
-| `PUBLIC_SANITY_API_VERSION`    | 省略可（コード側の既定値が使われる）                                       |
-| `PUBLIC_SITE_URL`              | サイトの絶対URL。`sitemap.xml`/`robots.txt`の絶対URL生成に使う             |
+| 変数名                      | 内容                                                           |
+| --------------------------- | -------------------------------------------------------------- |
+| `PUBLIC_SANITY_PROJECT_ID`  | SanityのプロジェクトID                                         |
+| `PUBLIC_SANITY_DATASET`     | 通常`production`                                               |
+| `PUBLIC_SANITY_API_VERSION` | 省略可（コード側の既定値が使われる）                           |
+| `PUBLIC_SITE_URL`           | サイトの絶対URL。`sitemap.xml`/`robots.txt`の絶対URL生成に使う |
 
 > ⚠️ **`studio/.env`の変数名とは異なる**（studio側は `SANITY_STUDIO_PROJECT_ID`）。値（project ID）は同じものを、変数名だけ変えてそれぞれに設定する。名前を間違えると、ビルド自体は成功するのにLive/Journalが常に空になる（下の「よくあるトラブル」参照）——実際に一度これで詰まったので、`.env.example`にもコメントを残してある。
 
@@ -89,10 +89,10 @@ Studio自体の初回セットアップ（Sanityアカウントでのログイ�
 
 同じGitHubリポジトリから、Cloudflare Pagesプロジェクトを**2つ**作る。
 
-| プロジェクト  | Root directory | ビルドコマンド            | 出力ディレクトリ | 環境変数                                                                              |
-| ------------- | --------------- | -------------------------- | ----------------- | -------------------------------------------------------------------------------------- |
-| サイト本体    | `/`（既定）      | `pnpm build`                | `build`            | 上表の`PUBLIC_*`一式 + `NODE_VERSION=24.20.0`                                          |
-| Sanity Studio | `studio`         | `pnpm exec sanity build`    | `dist`             | `SANITY_STUDIO_PROJECT_ID` / `SANITY_STUDIO_DATASET` + `NODE_VERSION=24.20.0`          |
+| プロジェクト  | Root directory | ビルドコマンド           | 出力ディレクトリ | 環境変数                                                                      |
+| ------------- | -------------- | ------------------------ | ---------------- | ----------------------------------------------------------------------------- |
+| サイト本体    | `/`（既定）    | `pnpm build`             | `build`          | 上表の`PUBLIC_*`一式 + `NODE_VERSION=24.20.0`                                 |
+| Sanity Studio | `studio`       | `pnpm exec sanity build` | `dist`           | `SANITY_STUDIO_PROJECT_ID` / `SANITY_STUDIO_DATASET` + `NODE_VERSION=24.20.0` |
 
 `NODE_VERSION`について：モノレポ全体（studioを含む）の依存関係がNode 22.20以上を要求するため、Root directoryが`/`のサイト本体プロジェクトでも明示的に設定が必要（詳細は[doc/designs.md §10](./doc/designs.md)）。
 

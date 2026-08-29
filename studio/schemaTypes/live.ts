@@ -26,9 +26,7 @@ export default defineType({
 			title: '店休日',
 			type: 'boolean',
 			initialValue: false,
-			description:
-				'臨時休業・貸切などでライブが無い日を記録する場合はON。ONの間は出演者欄が隠れ、' +
-				'サイトの一覧ではその日がグレーアウトして表示される（「休み」というキャストは作らない）。'
+			description: '臨時休業・貸切などで営業がない日を記録する場合はON。'
 		}),
 		defineField({
 			name: 'performers',
