@@ -1,17 +1,9 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages.js';
-	import { localePath } from '$lib/i18n';
 	import PhoneLink from './PhoneLink.svelte';
 	import LanguageToggle from './LanguageToggle.svelte';
 
 	const year = new Date().getFullYear().toString();
-
-	const navItems = [
-		{ href: '/about', label: m.nav_about },
-		{ href: '/journal', label: m.nav_journal },
-		{ href: '/live', label: m.nav_live },
-		{ href: '/access', label: m.nav_access }
-	];
 </script>
 
 <footer class="grain border-t border-border bg-surface">

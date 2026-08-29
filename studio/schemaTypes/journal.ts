@@ -37,7 +37,9 @@ export default defineType({
 			name: 'coverImage',
 			title: 'カバー画像',
 			type: 'image',
-			options: { hotspot: true }
+			options: { hotspot: true },
+			description:
+				'掲載場所（一覧・詳細ページ）によって、画像の四辺が少し見切れることがあります。個別に調整することはできないので、主役（人物・楽器など）はなるべく写真の中央に写っているものを選んでください。画像上の丸いピンをドラッグすると、見切れても残したい部分の目安を指定できます。'
 			// 代替テキストは運営に入力させず、サイト側で固定文言（「ブログカバー」）を使う。
 		}),
 		defineField({

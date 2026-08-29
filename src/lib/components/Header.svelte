@@ -18,6 +18,34 @@
 		const path = deLocalizeUrl(page.url).pathname;
 		return path === href || path.startsWith(`${href}/`);
 	}
+
+	// 現在ページの下に、帯（indicator）をスライドさせるアニメーション。
+	// SSR/プリレンダー時は $effect が走らないため、JS実行前は文字色の違いだけで
+	// アクティブ状態を示す（帯はopacity:0で始まり、初期化後にふわっと現れる）。
+	const linkEls: Record<string, HTMLAnchorElement> = {};
+	let indicator = $state({ x: 0, width: 0, ready: false });
+
+	function updateIndicator() {
+		const activeHref = navItems.find((item) => isActive(item.href))?.href;
+		const el = activeHref ? linkEls[activeHref] : undefined;
+		if (!el) {
+			indicator = { ...indicator, ready: false };
+			return;
+		}
+		indicator = { x: el.offsetLeft, width: el.offsetWidth, ready: true };
+	}
+
+	$effect(() => {
+		// page.url.pathname を依存として参照する → ページ遷移のたびに再計算される
+		void page.url.pathname;
+		updateIndicator();
+	});
+
+	$effect(() => {
+		// フォント読み込み等でレイアウトが後から動くケースに追従
+		window.addEventListener('resize', updateIndicator);
+		return () => window.removeEventListener('resize', updateIndicator);
+	});
 </script>
 
 <header
@@ -49,20 +77,32 @@
 		</div>
 
 		<nav
-			class="no-scrollbar flex items-center gap-7 overflow-x-auto border-t border-border py-3 text-sm font-medium tracking-wide whitespace-nowrap uppercase sm:justify-center sm:gap-12"
+			class="no-scrollbar relative flex items-center gap-7 overflow-x-auto border-t border-border py-3 text-sm font-medium tracking-wide whitespace-nowrap uppercase sm:justify-center sm:gap-12"
 			aria-label={m.site_name()}
 		>
 			{#each navItems as item (item.href)}
 				<a
+					bind:this={linkEls[item.href]}
 					href={localePath(item.href)}
-					class="border-b-2 pb-0.5 transition-colors hover:text-brand-ink {isActive(item.href)
-						? 'border-brand-ink text-brand-ink'
-						: 'border-transparent text-ink-muted'}"
+					class="relative pb-1.5 transition-colors duration-300 hover:text-brand-ink {isActive(
+						item.href
+					)
+						? 'text-brand-ink'
+						: 'text-ink-muted'}"
 					aria-current={isActive(item.href) ? 'page' : undefined}
 				>
 					{item.label()}
 				</a>
 			{/each}
+			<!-- 現在ページへスライドする帯。JS初期化前（SSR/プリレンダー直後）は文字色の差だけで
+			     アクティブ状態を示し、初期化後にこの帯がふわっと現れて以降は滑らかに追従する。 -->
+			<span
+				aria-hidden="true"
+				class="pointer-events-none absolute bottom-0 left-0 h-0.5 rounded-full bg-linear-to-r from-brand-deep via-brand to-gold transition-[transform,width,opacity] duration-400 ease-[cubic-bezier(0.22,1,0.36,1)]"
+				style:transform={`translateX(${indicator.x}px)`}
+				style:width={`${indicator.width}px`}
+				style:opacity={indicator.ready ? 1 : 0}
+			></span>
 		</nav>
 	</div>
 </header>
