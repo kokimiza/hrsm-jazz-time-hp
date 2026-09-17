@@ -19,10 +19,10 @@
 		<h1 class="font-display text-3xl font-semibold text-ink sm:text-4xl">
 			{m.live_archive_heading()}
 		</h1>
-		<p class="text-ink-muted">{m.live_archive_lead()}</p>
+		<p class="text-base text-ink-muted">{m.live_archive_lead()}</p>
 	</header>
 
-	<div class="max-w-2xl">
+	<div class="max-w-3xl">
 		<LiveCalendar {lives} emptyMessage={m.live_archive_empty} />
 		<Pagination basePath="/live/archive" {page} {totalPages} />
 	</div>

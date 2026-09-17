@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as m from '$lib/paraglide/messages.js';
 	import { getLocale } from '$lib/paraglide/runtime';
-	import LiveDateBadge from './LiveDateBadge.svelte';
+	import { formatDate } from '$lib/format';
 	import PerformerList from './PerformerList.svelte';
 	import type { LiveEntry } from '$lib/cms/types';
 
@@ -9,13 +9,16 @@
 	const locale = getLocale();
 </script>
 
-<!-- Home「次回のライブ」用のスポットライトカード。/live の日付バッジ・出演者表記と見た目を揃える。 -->
-<article class="grain flex gap-4 rounded-2xl border border-border bg-surface p-5 sm:p-6">
-	<LiveDateBadge date={live.date} {locale} />
-	<div class="flex min-w-0 flex-1 flex-col gap-2 pt-0.5">
+<!-- Home「次回のライブ」用のスポットライトカード。日付を大きな見出しに、出演者をその下に置く
+     （/live のライブ予定表と同じ「日付が先、出演者が続く」読み順に揃えている）。 -->
+<article class="grain rounded-2xl border border-border bg-surface p-6 sm:p-8">
+	<p class="font-display text-2xl font-semibold text-brand-ink sm:text-3xl">
+		{formatDate(live.date, locale)}
+	</p>
+	<div class="mt-4">
 		<PerformerList performers={live.performers} />
 		{#if live.note}
-			<p class="text-sm whitespace-pre-line text-ink-muted">
+			<p class="mt-1.5 text-base whitespace-pre-line text-ink-muted">
 				<span class="sr-only">{m.live_note_label()}: </span>{live.note}
 			</p>
 		{/if}

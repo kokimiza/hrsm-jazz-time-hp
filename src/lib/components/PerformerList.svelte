@@ -5,19 +5,16 @@
 	let { performers }: { performers: Performer[] } = $props();
 </script>
 
-<!-- 名前＋楽器バッジを並べる。名前は主役として太字、楽器はゴールドの縁取りバッジで控えめに添える。 -->
-<p class="flex flex-wrap items-center gap-x-2 gap-y-1.5">
+<!-- 出演者は「名前（楽器）」のただのテキスト。名前を大きめ・濃い色で主役にし、
+     楽器は括弧つきの補助表記に留める（小さな色つきバッジは読みにくいので使わない）。 -->
+<p class="flex flex-wrap items-baseline gap-x-2 gap-y-1 text-lg">
 	<span class="sr-only">{m.live_performers_label()}: </span>
 	{#each performers as performer, i (performer.name + i)}
-		<!-- 名前とバッジを1つの塊にして、折り返し時にバッジだけ単独で次の行に落ちないようにする -->
-		<span class="inline-flex items-center gap-1.5">
+		<!-- 名前と楽器を1つの塊にして、折り返し時に楽器名だけ単独で次の行に落ちないようにする -->
+		<span class="inline-flex items-baseline">
 			<span class="font-medium text-ink">{performer.name}</span>
 			{#if performer.instrument}
-				<span
-					class="inline-flex items-center rounded-full border border-gold/40 px-2 py-0.5 text-xs leading-none font-medium tracking-wide text-gold uppercase"
-				>
-					{performer.instrument}
-				</span>
+				<span class="text-base text-ink-muted">（{performer.instrument}）</span>
 			{/if}
 		</span>
 		{#if i < performers.length - 1}

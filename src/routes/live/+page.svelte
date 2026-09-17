@@ -17,11 +17,11 @@
 		<h1 class="font-display text-3xl font-semibold text-ink sm:text-4xl">
 			{m.live_page_heading()}
 		</h1>
-		<p class="text-ink-muted">{m.live_page_lead()}</p>
+		<p class="text-base text-ink-muted">{m.live_page_lead()}</p>
 		<TextLink href={localePath('/live/cast')}>{m.live_cast_cta()}</TextLink>
 	</header>
 
-	<div class="max-w-2xl">
+	<div class="max-w-3xl">
 		<LiveCalendar lives={data.lives} />
 
 		<p class="mt-8">

@@ -22,17 +22,18 @@ export function formatDate(dateStr: string, locale: Locale): string {
 
 export interface DateParts {
 	day: number;
-	month: string;
 	weekday: string;
+	/** 0=日 … 6=土。曜日ごとの色分け（土=青／日=赤）の判定に使う。 */
+	weekdayIndex: number;
 }
 
-/** ライブカレンダーの日付バッジ用に、日付を「日」「月」「曜日」に分解する。 */
+/** ライブ予定表の日付欄用に、日付を「日」「曜日」に分解する。月は月見出し側が持つ。 */
 export function formatDateParts(dateStr: string, locale: Locale): DateParts {
 	const date = parseDate(dateStr);
 	return {
 		day: date.getDate(),
-		month: new Intl.DateTimeFormat(intl(locale), { month: 'short' }).format(date),
-		weekday: new Intl.DateTimeFormat(intl(locale), { weekday: 'short' }).format(date)
+		weekday: new Intl.DateTimeFormat(intl(locale), { weekday: 'short' }).format(date),
+		weekdayIndex: date.getDay()
 	};
 }
 
