@@ -289,9 +289,12 @@ Tailwind CSS v4はCSSファースト設定のため、`class`戦略のダーク�
 - **自動反映**：SanityのWebhook設定（Publish時発火）→ サイト本体プロジェクトのDeploy Hook URLを登録。運営がStudioで投稿・公開するだけでサイトが自動的に再ビルド＆再デプロイされる。
 - 環境変数（サイト側）：`PUBLIC_SANITY_PROJECT_ID` / `PUBLIC_SANITY_DATASET` / `PUBLIC_SANITY_API_VERSION`（日付形式）。公開データのみを扱うため書き込みトークンは持たない。
   - `PUBLIC_SITE_URL`：サイトの絶対オリジン（`sitemap.xml` / `robots.txt`用、§5.1）。仮ドメイン運用中は当該Cloudflare Pagesプロジェクトの`https://<project>.pages.dev`を設定し、本ドメイン確定後に差し替える。
-- **Node.jsバージョン**：`pnpm install` はモノレポ全体（サイト本体＋studio）を一括で解決するため、Root directoryが`/`のサイト本体プロジェクトでも、studio側の依存関係（Sanity CLIが内部で使う`skills`パッケージ、`engines.node: >=22.20.0`）の制約を受ける。Cloudflare Pagesの現行ビルドイメージ（v3）は `package.json` の `engines` を見て自動選択してはくれないため、**両方のCloudflare Pagesプロジェクトで環境変数 `NODE_VERSION` を明示的に設定すること**（Settings → Environment variables）。
-  - 設定値は **`24.20.0`（Node 24系・Active LTS）を推奨**。`>=22.20.0`という最低ラインだけを満たすなら22系でも動くが、22系は既にMaintenance LTS（EOL 2027-04、あと半年程度）で近いうちに再度メンテが必要になる。24系はActive LTS（EOL 2028-04）で当面いじらずに済む。26系はまだCurrent（LTSは2026-10〜）で、この時点で本番に固定するには時期尚早。
-  - リポジトリには目安として `.node-version`（`24.20.0`）を置いてあるが、Root directoryがサブディレクトリ（`studio`）の場合に確実に拾われる保証はないため、確実なのは上記の環境変数設定。
+- **Node.jsバージョンと、studioをワークスペースから外している理由**：ビルドイメージに「焼き込まれていない」Nodeを要求すると、イメージはasdfのnode-build定義をGitHubから取りに行く。2026-09-18にこの取得が失敗してデプロイが全面停止した（`node-build: definition not found: 24.20.0` / `could not read Username for 'https://github.com'`）。**取得が要らない＝イメージ既定のNodeで済ませる**構成にしてある。
+  - 両プロジェクトとも `.node-version` に **`22.16.0`**（v3ビルドイメージの既定Node）を置く。`NODE_VERSION`環境変数は`.node-version`があると無視されるので、実効値はこのファイル。
+  - ただし素直に22.16.0へ落とすと、studio側の`skills`（Sanity CLIの内部依存、`engines.node: >=22.20.0`）が`engine-strict`で弾かれる。そこで **studioをpnpmワークスペースから外し**（ルート`pnpm-workspace.yaml`の`packages`を空に）、サイト本体の`pnpm install`がstudioの依存を一切解決しないようにした。これでサイト本体の実効下限はeslint 10由来の**22.13.0**まで下がる（`package.json`の`engines`もその値）。
+  - studioは `studio/pnpm-workspace.yaml` を置いて**自前のワークスペースルート**にしてある。これが無いとpnpmが親のワークスペースまで遡り、「studioはメンバーではない」と判断して依存を一切入れずに終わる（＝ビルドが壊れる）。依存は `studio/pnpm-lock.yaml` で独立管理。
+  - studioだけは`skills`の下限を満たせないため、`studio/.npmrc` に `engine-strict=false` を置いて警告どまりにしている。`skills`はSanity CLIの内部ヘルパーで`sanity build`の経路では使われない。なお`engine-strict`を読むのはpnpm 10系（Cloudflareが使用）で、pnpm 11ではこの設定は読まれない。
+  - 分離の副作用として、studioのビルドがサイト本体の`tsconfig.json`を拾う問題が出た。Viteの解決器はtsconfigが見つかるまで親を遡り、ルートの`tsconfig.json`は`svelte-kit sync`が生成する`./.svelte-kit/tsconfig.json`をextendsしている。studioは独立プロジェクトなのでその生成が走らず`Tsconfig not found`で落ちる。`studio/sanity.cli.ts`の`vite`フックで`tsconfig`を絶対パス固定して解決済み。
 
 ---
 

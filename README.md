@@ -23,7 +23,7 @@
 ## アーキテクチャ
 
 ```
-kokimiza/hrsm-jazz-time-hp （1つのGitHubリポジトリ、pnpmモノレポ）
+kokimiza/hrsm-jazz-time-hp （1つのGitHubリポジトリ、2つの独立プロジェクト）
 ├── サイト本体（このディレクトリ）── SvelteKit / adapter-static ── Cloudflare Pages ①
 └── studio/                    ── Sanity Studio（管理画面）    ── Cloudflare Pages ②
 ```
@@ -57,11 +57,13 @@ Cloudflare Pages の Deploy Hook を叩く
 ## 開発者向け：ローカル開発
 
 ```sh
-pnpm install                # ワークスペース全体（サイト本体 + studio）を一括インストール
+pnpm install                # サイト本体の依存をインストール
 cp .env.example .env        # Sanityのproject ID等を設定（未設定でもビルドは通り、CMSは空の状態になる）
 
 pnpm dev                    # サイト本体の開発サーバー
-pnpm --filter studio dev    # Studioの開発サーバー（別ターミナルで）
+
+# Studioは独立プロジェクト（ワークスペース外）なので、studio/ で個別にインストール・起動する
+cd studio && pnpm install && pnpm dev
 
 pnpm build                  # 本番ビルド（Cloudflare Pagesと同じ`adapter-static`出力を確認したいとき）
 pnpm check                  # 型チェック
@@ -89,12 +91,14 @@ Studio自体の初回セットアップ（Sanityアカウントでのログイ�
 
 同じGitHubリポジトリから、Cloudflare Pagesプロジェクトを**2つ**作る。
 
-| プロジェクト  | Root directory | ビルドコマンド           | 出力ディレクトリ | 環境変数                                                                      |
-| ------------- | -------------- | ------------------------ | ---------------- | ----------------------------------------------------------------------------- |
-| サイト本体    | `/`（既定）    | `pnpm build`             | `build`          | 上表の`PUBLIC_*`一式 + `NODE_VERSION=24.20.0`                                 |
-| Sanity Studio | `studio`       | `pnpm exec sanity build` | `dist`           | `SANITY_STUDIO_PROJECT_ID` / `SANITY_STUDIO_DATASET` + `NODE_VERSION=24.20.0` |
+| プロジェクト  | Root directory | ビルドコマンド           | 出力ディレクトリ | 環境変数                                             |
+| ------------- | -------------- | ------------------------ | ---------------- | ---------------------------------------------------- |
+| サイト本体    | `/`（既定）    | `pnpm build`             | `build`          | 上表の`PUBLIC_*`一式                                 |
+| Sanity Studio | `studio`       | `pnpm exec sanity build` | `dist`           | `SANITY_STUDIO_PROJECT_ID` / `SANITY_STUDIO_DATASET` |
 
-`NODE_VERSION`について：モノレポ全体（studioを含む）の依存関係がNode 22.20以上を要求するため、Root directoryが`/`のサイト本体プロジェクトでも明示的に設定が必要（詳細は[doc/designs.md §10](./doc/designs.md)）。
+Nodeバージョンについて：両プロジェクトとも `.node-version`（`22.16.0` = Cloudflareビルドイメージ既定）で指定している。**`NODE_VERSION`環境変数は`.node-version`があると無視される**ので、ダッシュボード側での設定は不要。イメージに無いNodeを指定するとビルドイメージがGitHubから定義を取りに行き、そこが落ちるとデプロイが止まるため、あえて既定Nodeに合わせてある。
+
+この制約のため、**studioはpnpmワークスペースに含めていない**（`studio/`は同一リポジトリ内の独立プロジェクトで、`studio/pnpm-lock.yaml`を自前で持つ）。経緯と各ファイルの役割は[doc/designs.md §10](./doc/designs.md)を参照。
 
 ### Sanity Webhook → Cloudflare Deploy Hook の設定
 
@@ -121,6 +125,10 @@ Studio自体の初回セットアップ（Sanityアカウントでのログイ�
 **Studioが `No project with the ID placeholder-project-id exists` と出す**
 
 `SANITY_STUDIO_PROJECT_ID`が未設定のまま動いている（[studio/sanity.config.ts](./studio/sanity.config.ts)のフォールバック値）。Studio用Cloudflare Pagesプロジェクトの環境変数を確認。
+
+**デプロイが `node-build: definition not found: <version>` で失敗する**
+
+Cloudflareのビルドイメージに焼き込まれていないNodeを要求している。イメージは不足分をGitHubから取りに行くが、そこが落ちるとデプロイ全体が止まる（2026-09-18に発生）。`.node-version`をイメージ既定の`22.16.0`から動かさないこと。上げる必要が出たときは、`doc/designs.md §10`の依存関係の制約を先に確認する。
 
 **環境変数を追加・変更したのに反映されない**
 
