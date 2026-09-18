@@ -277,6 +277,8 @@ Tailwind CSS v4はCSSファースト設定のため、`class`戦略のダーク�
 
 ## 10. デプロイ構成（Cloudflare Pages）
 
+> 具体的な設定値・環境変数・引き継ぎ手順は [deploy.md](./deploy.md)。ここでは構成とその理由を書く。
+
 同一GitHubリポジトリから、**Cloudflare Pagesプロジェクトを2つ**作成する（モノレポの「Root directory」機能を使う）。
 
 | プロジェクト  | Root directory    | ビルドコマンド           | 出力ディレクトリ                      | 用途            |
