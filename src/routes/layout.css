@@ -85,6 +85,64 @@ body {
 }
 
 /*
+ * 初回訪問者向けのテーマ切替案内（ThemeHint.svelte）の「ほわほわ」。
+ * 店の灯りがゆっくり明滅するイメージで、ボタンを包む金色の光と吹き出しの縁のにじみを
+ * 同じ3秒周期で呼吸させる。注意を引きたいだけなので、点滅ではなく必ず光が残る振れ幅にする。
+ */
+@keyframes theme-hint-halo {
+	0%,
+	100% {
+		opacity: 0.4;
+		transform: scale(0.94);
+	}
+	50% {
+		opacity: 1;
+		transform: scale(1.1);
+	}
+}
+
+@keyframes theme-hint-card {
+	0%,
+	100% {
+		box-shadow:
+			0 12px 32px -14px rgb(0 0 0 / 0.5),
+			0 0 8px -3px color-mix(in oklab, var(--color-gold) 40%, transparent);
+	}
+	50% {
+		box-shadow:
+			0 12px 32px -14px rgb(0 0 0 / 0.5),
+			0 0 22px 1px color-mix(in oklab, var(--color-gold) 55%, transparent);
+	}
+}
+
+.theme-hint-halo {
+	background: radial-gradient(
+		circle,
+		color-mix(in oklab, var(--color-gold) 45%, transparent) 0%,
+		color-mix(in oklab, var(--color-gold) 16%, transparent) 55%,
+		transparent 72%
+	);
+	animation: theme-hint-halo 3s ease-in-out infinite;
+}
+
+.theme-hint-card {
+	animation: theme-hint-card 3s ease-in-out infinite;
+}
+
+/* 明滅が苦手な人／OS側で「視差を減らす」にしている人には、動かない静かな光だけを残す。 */
+@media (prefers-reduced-motion: reduce) {
+	.theme-hint-halo,
+	.theme-hint-card {
+		animation: none;
+	}
+	.theme-hint-card {
+		box-shadow:
+			0 12px 32px -14px rgb(0 0 0 / 0.5),
+			0 0 14px -2px color-mix(in oklab, var(--color-gold) 45%, transparent);
+	}
+}
+
+/*
  * 紙のざらつき感（グレイン）。ジャズクラブのポスターやレコードジャケットのような
  * 手触りを、カード・ボタン・帯といった共通コンポーネントに薄く重ねるための装飾。
  * 画像アセットは使わず、feTurbulenceで生成した粒状ノイズをタイル状の背景として敷き、

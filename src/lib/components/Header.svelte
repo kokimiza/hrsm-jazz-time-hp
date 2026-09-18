@@ -4,6 +4,7 @@
 	import { deLocalizeUrl } from '$lib/paraglide/runtime';
 	import { localePath } from '$lib/i18n';
 	import ThemeToggle from './ThemeToggle.svelte';
+	import ThemeHint from './ThemeHint.svelte';
 	import PhoneLink from './PhoneLink.svelte';
 
 	const navItems = [
@@ -73,7 +74,12 @@
 					class="hidden items-center gap-2 rounded-full border border-border px-4 py-2 text-sm text-ink hover:border-brand-ink hover:text-brand-ink md:inline-flex"
 				/>
 				<span class="hidden h-6 w-px bg-border md:block"></span>
-				<ThemeToggle />
+				<!-- 初回訪問の案内（ThemeHint）はこのボタンを基準に絶対配置する。
+				     z-50 は、下のnav（position:relative）より後ろに回らないようにするため。 -->
+				<div class="relative z-50">
+					<ThemeToggle />
+					<ThemeHint />
+				</div>
 			</div>
 		</div>
 

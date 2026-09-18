@@ -11,6 +11,9 @@
 	"nav_access": "ACCESS",
 
 	"theme_toggle_label": "Theme",
+	"theme_hint_title": "You can change the brightness",
+	"theme_hint_body": "Pick whichever is easier to read.",
+	"theme_hint_close": "Dismiss this tip",
 	"language_toggle_label": "Switch language",
 
 	"phone_number": "082-247-8912",
