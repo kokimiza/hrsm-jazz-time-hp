@@ -1,4 +1,11 @@
 allowBuilds:
   esbuild: true
-packages:
-  - 'studio'
+
+# studioはあえてワークスペースに含めない（同一リポジトリ内の独立プロジェクトとして扱う）。
+# 含めると、Root directoryが`/`のサイト本体をビルドするときの`pnpm install`が
+# studio側の依存まで一括解決してしまい、Sanity CLIが内部で使う`skills`
+# （engines.node: >=22.20.0）の制約をサイト本体まで受ける。
+# その下限がCloudflareビルドイメージの既定Node（22.16.0）を上回るため、
+# サイト本体が「イメージに無いNode」を要求してビルドできなくなる（詳細は doc/designs.md §10）。
+# 分離した結果、studioは自前の studio/pnpm-lock.yaml で独立して解決される。
+packages: []
