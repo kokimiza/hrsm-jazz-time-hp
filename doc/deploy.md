@@ -77,7 +77,7 @@ Cloudflare の各プロジェクト → Settings → Variables and Secrets で�
 
 > ⚠️ ①と②で **変数名が違う**（`PUBLIC_SANITY_…` と `SANITY_STUDIO_…`）。値は同じ。取り違えると、ビルドは成功するのにサイトのライブ・日誌が空になる。
 
-- Project ID は https://www.sanity.io/manage → 対象プロジェクトの画面上部に出ている。
+- Project ID は https://www.sanity.io/manage → 対象プロジェクトの画面上部に出ている。**`p`（アルファベット）と `8`（数字）が似ていて見間違えやすいので、貼り付けたら1文字ずつ照合する**（例：`3pobbpuv` と `38obbpuv` は別物）。
 - 環境変数を追加・変更しただけでは反映されない。保存後に **再デプロイ**（Deployments → 最新 → Retry deployment）する。
 
 ### 自動デプロイ（Studio で公開 → サイトに反映）
@@ -86,7 +86,7 @@ Cloudflare の各プロジェクト → Settings → Variables and Secrets で�
 Studio で Publish → Sanity Webhook → ①の Deploy Hook → ①が再ビルド（Sanityから最新データを取得）
 ```
 
-1. **Cloudflare**：① → Settings → Builds → Deploy hooks → Add deploy hook（名前は何でもよい）→ 発行された URL をコピー
+1. **Cloudflare**：**①（サイト本体）** → Settings → Builds → Deploy hooks → Add deploy hook（名前は何でもよい）→ 発行された URL をコピー
 2. **Sanity**：https://www.sanity.io/manage → 対象プロジェクト → API → Webhooks → Create webhook
    - URL：手順1の Deploy Hook URL
    - Dataset：`production`
@@ -94,7 +94,9 @@ Studio で Publish → Sanity Webhook → ①の Deploy Hook → ①が再ビル
    - Filter：`_type == "live" || _type == "journal"`
    - HTTP method：POST
 
-Deploy Hook の URL は **Pages プロジェクトごとに固有**。プロジェクトを作り直したら必ず Webhook の URL も差し替える。
+> Deploy hooks を見るのは **①だけ**。②Studio は中身（管理画面のコード）が変わらない限り再ビルドの必要が無いので、Deploy Hook を作らない。「Sanity で公開してもサイトに反映されない」ときにまず開くのは①の Settings → Builds → Deploy hooks。
+
+Deploy Hook の URL は **Pages プロジェクトごとに固有**。プロジェクトを作り直したら必ず Webhook の URL も差し替える。Webhook がちゃんと発火・成功しているかは、Sanity の Webhooks 画面 → 対象の Webhook → **実行履歴（Attempt log）** で確認できる（履歴が無ければ発火していない＝Filter/Trigger の設定ミス、履歴はあるが失敗していれば URL が古い）。
 
 ### Studio 用の Sanity 設定
 
