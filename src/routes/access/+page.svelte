@@ -32,6 +32,13 @@
 					{m.address_line1()}<br />
 					{m.address_line2()}
 				</p>
+				<a
+					href={`https://www.google.com/maps/search/?api=1&query=${mapQuery}`}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="mt-4 inline-flex min-h-11 items-center gap-2 text-sm text-brand-ink underline underline-offset-4"
+					>{m.map_open()} <span aria-hidden="true">↗</span></a
+				>
 			</div>
 
 			<div>

@@ -38,7 +38,7 @@
 	"master_name": "石川",
 	"master_role": "マスター / ピアノ",
 	"master_bio": "ジャズをもっと身近に。音楽を聴く人、演奏する人、そしてジャズが好きな人が集まる場所でありたい——そんな思いで、今日もカウンターの向こうに立っています。",
-	"home_journal_heading": "直近",
+	"home_journal_heading": "お店からのお知らせ",
 	"home_journal_cta": "日誌を見る",
 	"home_access_heading": "アクセス",
 	"home_access_cta": "詳細を見る",
@@ -82,5 +82,10 @@
 	"access_phone_heading": "電話",
 	"access_hours_heading": "営業時間",
 	"access_hours_body": "19:30〜23:30（ラストオーダー 23:00）／定休日：日曜日・祝日。演奏時間等の詳細は「ご案内」をご覧ください。",
-	"access_map_heading": "地図"
+	"access_map_heading": "地図",
+	"skip_content": "本文へ移動",
+	"visit_heading": "今夜のご来店に",
+	"visit_contact": "営業・ライブのお問い合わせ",
+	"map_open": "Google マップで開く",
+	"site_description": "広島・流川のジャズバー JAZZTIME。お酒とともにジャズの生演奏を楽しむ夜を。ライブスケジュール、営業時間、店舗へのアクセスをご案内します。"
 }

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import * as m from '$lib/paraglide/messages.js';
 	import { page } from '$app/state';
 	import { deLocalizeHref } from '$lib/paraglide/runtime';
 	import './layout.css';
@@ -15,16 +16,20 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<link rel="icon" type="image/svg+xml" href={favicon} />
+	<meta name="description" content={m.site_description()} />
+	<meta name="theme-color" content="#201a16" />
 </svelte:head>
 
 {#if !isHome}
 	<AmbientBackground />
 {/if}
 
-<div class="flex min-h-dvh flex-col pb-16 md:pb-0">
+<a href="#main-content" class="skip-link">{m.skip_content()}</a>
+
+<div class="flex min-h-dvh flex-col pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-0">
 	<Header />
-	<main class="flex-1">
+	<main id="main-content" tabindex="-1" class="flex-1">
 		{@render children()}
 	</main>
 	<Footer />

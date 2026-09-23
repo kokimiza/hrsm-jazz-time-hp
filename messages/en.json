@@ -1,84 +1,66 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-
 	"site_name": "JAZZTIME",
 	"site_name_full": "JAZZTIME Hiroshima",
-
 	"nav_home": "HOME",
 	"nav_live": "LIVE",
 	"nav_journal": "JOURNAL",
 	"nav_about": "ABOUT",
 	"nav_access": "ACCESS",
-
 	"theme_toggle_label": "Theme",
 	"theme_hint_title": "You can change the brightness",
 	"theme_hint_body": "Pick whichever is easier to read.",
 	"theme_hint_close": "Dismiss this tip",
 	"language_toggle_label": "Switch language",
-
 	"phone_number": "082-247-8912",
 	"phone_label": "Phone",
 	"call_now": "Call now",
-
 	"address_line1": "2-24 Nagarekawa-cho, Naka-ku,",
 	"address_line2": "Hiroshima, Kura Bldg. 4F",
-
 	"footer_rights": "© {year} JAZZTIME",
-
 	"hero_kicker": "LIVE JAZZ IN HIROSHIMA",
 	"hero_headline_line1": "Nagarekawa, Hiroshima.",
 	"hero_headline_line2": "A night of drinks and live jazz.",
 	"hero_lead": "JAZZTIME is a jazz bar in Hiroshima where you can enjoy live jazz alongside a drink.",
 	"hero_cta_live": "View live schedule",
 	"hero_cta_access": "Access",
-
 	"next_live_heading": "Next Live",
 	"next_live_empty": "No upcoming live shows are scheduled right now. Please call us for the latest information.",
 	"live_performers_label": "Performers",
 	"live_note_label": "Note",
 	"live_closed_label": "Closed",
-
 	"home_about_heading": "About JAZZTIME",
 	"home_about_body": "A jazz bar in Nagarekawa-cho, Naka-ku, Hiroshima. Enjoy jazz-centered music, live performances and sessions, in a calm bar space.",
 	"home_about_cta": "More about JAZZTIME",
-
 	"home_master_heading": "From the Master",
 	"master_kicker": "PROFILE",
 	"master_monogram": "石",
 	"master_name": "Ishikawa",
 	"master_role": "Master / Piano",
 	"master_bio": "Making jazz feel a little closer — a place for listeners, players, and anyone who loves jazz to gather. That's the spirit behind the counter every night.",
-
-	"home_journal_heading": "Latest Journal",
+	"home_journal_heading": "Notes from JAZZTIME",
 	"home_journal_cta": "More journal entries",
-
 	"home_access_heading": "Access",
 	"home_access_cta": "See access details",
-
 	"live_page_heading": "LIVE SCHEDULE",
 	"live_page_lead": "We regularly host live jazz. Performers and dates are listed below.",
 	"live_archive_cta": "View past lives",
-
 	"live_archive_heading": "Past Lives",
 	"live_archive_lead": "A record of the live shows we've hosted so far.",
 	"live_archive_empty": "No past lives yet.",
 	"live_archive_back": "Back to live schedule",
 	"live_cast_cta": "About the Cast",
-
 	"cast_page_heading": "Cast",
 	"cast_page_lead": "Meet the musicians who perform at JAZZTIME.",
 	"cast_empty": "No cast members to show right now.",
-
 	"pagination_prev": "Prev",
 	"pagination_next": "Next",
 	"pagination_page_of": "{page} / {total}",
-
 	"journal_page_heading": "Journal",
 	"journal_page_lead": "Notes and small updates from JAZZTIME.",
 	"journal_empty": "No entries yet.",
 	"journal_read_more": "Read more",
 	"journal_back_to_list": "Back to journal",
-
 	"about_page_heading": "ABOUT",
 	"about_lead": "Please check the following before your visit.",
 	"about_hours_label": "Hours",
@@ -94,12 +76,16 @@
 	"about_closed_value": "Sundays and public holidays",
 	"about_session_label": "Session Night",
 	"about_session_value": "1st & 3rd Saturdays of the month",
-
 	"access_page_heading": "ACCESS",
 	"access_shop_name": "JAZZTIME",
 	"access_address_heading": "Address",
 	"access_phone_heading": "Phone",
 	"access_hours_heading": "Hours",
 	"access_hours_body": "7:30 PM – 11:30 PM (last order 11:00 PM) / Closed Sundays & holidays. See About for full details.",
-	"access_map_heading": "Map"
+	"access_map_heading": "Map",
+	"skip_content": "Skip to content",
+	"visit_heading": "Plan your evening",
+	"visit_contact": "Enquiries about opening hours & live music",
+	"map_open": "Open in Google Maps",
+	"site_description": "Live jazz and drinks at JAZZTIME in Nagarekawa, Hiroshima. Explore our live music schedule, opening hours and directions for your next evening out."
 }

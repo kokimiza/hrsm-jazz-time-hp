@@ -17,14 +17,21 @@
 	href={localePath(`/journal/${entry.slug}`)}
 	class="grain group flex flex-col overflow-hidden rounded-2xl border border-border bg-surface transition-shadow hover:shadow-lg"
 >
-	<div class="aspect-[16/10] overflow-hidden bg-canvas">
+	<div class="aspect-16/10 overflow-hidden bg-canvas">
 		{#if cover}
 			<img
 				src={cover}
-				alt="ブログカバー"
+				alt=""
 				loading="lazy"
 				class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
 			/>
+		{:else}
+			<div
+				class="flex h-full items-center justify-center bg-linear-to-br from-brand-deep to-ink"
+				aria-hidden="true"
+			>
+				<span class="font-display text-3xl tracking-[0.15em] text-[#c6a664]">JAZZTIME</span>
+			</div>
 		{/if}
 	</div>
 	<div class="flex flex-1 flex-col gap-2 p-5">

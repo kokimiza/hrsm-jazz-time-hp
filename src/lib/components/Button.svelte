@@ -14,7 +14,7 @@
 	} = $props();
 
 	const base =
-		'inline-flex items-center justify-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium tracking-wide transition-colors';
+		'inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 py-2.5 text-sm font-medium tracking-wide transition-colors';
 	const variants = {
 		// primaryだけ紙の手触り（.grain）を乗せる。secondaryは背景が透明なので効果が出ない。
 		primary: 'grain bg-brand text-white hover:bg-brand-deep',

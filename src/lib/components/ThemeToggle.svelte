@@ -7,8 +7,9 @@
 <button
 	type="button"
 	onclick={() => theme.toggle()}
-	class="inline-flex size-9 items-center justify-center rounded-full border border-border text-ink-muted transition-colors hover:border-brand-ink hover:text-brand-ink"
+	class="inline-flex size-11 items-center justify-center rounded-full border border-border text-ink-muted transition-colors hover:border-brand-ink hover:text-brand-ink"
 	aria-label={m.theme_toggle_label()}
+	aria-pressed={theme.resolved === 'dark'}
 	title={m.theme_toggle_label()}
 >
 	{#if theme.resolved === 'dark'}
