@@ -1,9 +1,13 @@
+import { todayInJapan } from '$lib/format';
 import { safeFetch } from './client';
 import type { CastMember, JournalEntry, JournalListEntry, LiveEntry } from './types';
 
-/** GROQの `date >= $today` 比較のための "YYYY-MM-DD"（ビルド時点の日付で確定する）。 */
+/**
+ * GROQの `date >= $today` 比較のための "YYYY-MM-DD"（ビルド時点の日付で確定する）。
+ * ビルド後に日付が進んだ分は、ブラウザ側が閲覧時点の日付で絞り直す（$lib/stores/today.svelte.ts）。
+ */
 function today(): string {
-	return new Date().toISOString().slice(0, 10);
+	return todayInJapan();
 }
 
 // performers[].cast はcastマスタへの参照。表示用に名前をデリファレンスして
@@ -17,21 +21,15 @@ const liveProjection = `{
 	closed
 }`;
 
-/** 今後のライブ一覧（開催日が近い順）。過去分・詳細ページは持たない。店休日も一覧に含めて表示する。 */
+/**
+ * 今後のライブ一覧（開催日が近い順）。過去分・詳細ページは持たない。店休日も一覧に含めて表示する。
+ * Homeの「次回のライブ」もこの一覧から閲覧時点で選ぶ（ビルド時に1件へ絞ると、その日を過ぎた後に出すものが無くなる）。
+ */
 export async function getUpcomingLives(): Promise<LiveEntry[]> {
 	return safeFetch<LiveEntry[]>(
 		`*[_type == "live" && date >= $today] | order(date asc) ${liveProjection}`,
 		{ today: today() },
 		[]
-	);
-}
-
-/** 次回ライブ（Home用）。店休日は「次回のライブ」ではないので対象外にする。 */
-export async function getNextLive(): Promise<LiveEntry | null> {
-	return safeFetch<LiveEntry | null>(
-		`*[_type == "live" && date >= $today && closed != true] | order(date asc)[0] ${liveProjection}`,
-		{ today: today() },
-		null
 	);
 }
 

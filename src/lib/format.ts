@@ -6,6 +6,15 @@ function parseDate(dateStr: string): Date {
 	return new Date(dateStr.length <= 10 ? `${dateStr}T00:00:00` : dateStr);
 }
 
+/**
+ * 店の現地日付（日本時間）の "YYYY-MM-DD"。ライブの `date` との比較に使う。
+ * UTCのままだと日本の0〜9時の間は前日扱いになり、昨日のライブが「今後」に残ってしまう。
+ * 閲覧者のタイムゾーンにも依らないよう、JST（UTC+9・夏時間なし）に固定して計算する。
+ */
+export function todayInJapan(now: Date = new Date()): string {
+	return new Date(now.getTime() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10);
+}
+
 function intl(locale: Locale) {
 	return locale === 'ja' ? 'ja-JP' : 'en-US';
 }

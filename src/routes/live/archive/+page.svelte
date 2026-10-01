@@ -9,4 +9,9 @@
 	<title>{m.live_archive_heading()} | {m.site_name()}</title>
 </svelte:head>
 
-<LiveArchiveView lives={data.lives} page={data.page} totalPages={data.totalPages} />
+<LiveArchiveView
+	lives={data.lives}
+	upcoming={data.upcoming}
+	page={data.page}
+	totalPages={data.totalPages}
+/>

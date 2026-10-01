@@ -4,10 +4,12 @@
 	import Button from '$lib/components/Button.svelte';
 	import TextLink from '$lib/components/TextLink.svelte';
 	import LiveCard from '$lib/components/LiveCard.svelte';
+	import LiveLoading from '$lib/components/LiveLoading.svelte';
 	import JournalCard from '$lib/components/JournalCard.svelte';
 	import PhoneLink from '$lib/components/PhoneLink.svelte';
 	import MasterProfile from '$lib/components/MasterProfile.svelte';
 	import { localePath } from '$lib/i18n';
+	import { isUpcoming, today } from '$lib/stores/today.svelte';
 	// 元写真(jazztime-interior.png, 4000x3000/7.5MB)はモバイルファーストの表示コストには重すぎるため、
 	// リサイズ・WebP圧縮したものをヒーローに使う（元ファイルはsrc/lib/assetsにそのまま残してある）。
 	import hero1200 from '$lib/assets/jazztime-interior-1200.webp';
@@ -98,18 +100,27 @@
 			</div>
 			<TextLink href={localePath('/live')}>{m.hero_cta_live()}</TextLink>
 		</div>
-		{#if data.nextLive}
+		<!-- 次回のライブは閲覧時点の日付で選ぶ（ビルド後に過ぎたものは飛ばす）。日付が決まるまではローディング表示。
+		     店休日は「次回のライブ」ではないので対象外。 -->
+		{#await today.date}
 			<div class="max-w-3xl">
-				<LiveCard live={data.nextLive} />
+				<LiveLoading variant="card" />
 			</div>
-		{:else}
-			<div class="rounded-2xl border border-border p-6 sm:p-8">
-				<p class="max-w-2xl leading-relaxed text-ink-muted">{m.next_live_empty()}</p>
-				<PhoneLink
-					class="mt-5 inline-flex items-center gap-2 text-brand-ink underline underline-offset-4"
-				/>
-			</div>
-		{/if}
+		{:then date}
+			{@const nextLive = data.lives.find((live) => !live.closed && isUpcoming(live, date))}
+			{#if nextLive}
+				<div class="max-w-3xl">
+					<LiveCard live={nextLive} />
+				</div>
+			{:else}
+				<div class="rounded-2xl border border-border p-6 sm:p-8">
+					<p class="max-w-2xl leading-relaxed text-ink-muted">{m.next_live_empty()}</p>
+					<PhoneLink
+						class="mt-5 inline-flex items-center gap-2 text-brand-ink underline underline-offset-4"
+					/>
+				</div>
+			{/if}
+		{/await}
 	</Container>
 </section>
 

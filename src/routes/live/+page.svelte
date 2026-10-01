@@ -2,8 +2,10 @@
 	import * as m from '$lib/paraglide/messages.js';
 	import Container from '$lib/components/Container.svelte';
 	import LiveCalendar from '$lib/components/LiveCalendar.svelte';
+	import LiveLoading from '$lib/components/LiveLoading.svelte';
 	import TextLink from '$lib/components/TextLink.svelte';
 	import { localePath } from '$lib/i18n';
+	import { isUpcoming, today } from '$lib/stores/today.svelte';
 
 	let { data } = $props();
 </script>
@@ -22,7 +24,13 @@
 	</header>
 
 	<div class="max-w-3xl">
-		<LiveCalendar lives={data.lives} />
+		<!-- 閲覧時点の日付で絞る（ビルド後に過ぎたライブは出さない。アーカイブ側に回る）。
+		     日付が決まるまではローディング表示。 -->
+		{#await today.date}
+			<LiveLoading variant="calendar" />
+		{:then date}
+			<LiveCalendar lives={data.lives.filter((live) => isUpcoming(live, date))} />
+		{/await}
 
 		<p class="mt-8">
 			<TextLink href={localePath('/live/archive')}>{m.live_archive_cta()}</TextLink>

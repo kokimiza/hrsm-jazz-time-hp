@@ -26,6 +26,7 @@
 	"hero_cta_access": "Access",
 	"next_live_heading": "Next Live",
 	"next_live_empty": "No upcoming live shows are scheduled right now. Please call us for the latest information.",
+	"live_loading": "Loading the live schedule",
 	"live_performers_label": "Performers",
 	"live_note_label": "Note",
 	"live_closed_label": "Closed",

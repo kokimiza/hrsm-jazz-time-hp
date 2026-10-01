@@ -153,6 +153,7 @@ concept.md の「NEWS」をリネーム。運営が思ったことや出来事�
 ## 5. データ取得・ビルド方式（静的サイトの肝）
 
 - 全ページ **ビルド時プリレンダー**（`export const prerender = true` をルート`+layout.ts`に指定）。実行時サーバーは持たない。
+- ライブの「今後／過去」の境目だけは**閲覧時点の日付（日本時間）でブラウザ側が絞り直す**（[src/lib/stores/today.svelte.ts](../src/lib/stores/today.svelte.ts)）。ビルド時の絞り込みは再ビルドされるまで更新されず、CMSの更新が無い日が続くと終わったライブが「次回のライブ」や`/live`に残ってしまうため。ビルド後に過ぎたライブはHome・`/live`から外し、`/live/archive`の1ページ目の先頭に足す。閲覧日は解決待ちの Promise として持ち、表示側は`{#await}`で受ける。プリレンダーされたHTMLには pending 側のローディング表示（`LiveLoading.svelte`）だけが入るので、ビルド時点の古いライブが一瞬でも見えることはない。
 - `/journal/[slug]` のような動的ルートは `entries()` でビルド時にSanityから全slugを取得して列挙する（`live`に詳細ページはないので対象外）。
 - `/live/archive/[page]` も同様に `entries()` を使う。過去ライブの総件数を`count()`クエリで取得し、1ページ12件（`ARCHIVE_PAGE_SIZE`）で割った残りページ数分（2ページ目以降）を列挙してビルド時に全ページ分の静的HTMLを書き出す。ページ1のみ`/live/archive`が別ルートとして担当し、実際の一覧・ページング表示は共通コンポーネント（`LiveArchiveView.svelte`）にまとめて重複を避けている。
 - Sanityクライアントは読み取り専用（公開データのみを扱うため書き込みトークンは不要）。
